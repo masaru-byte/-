@@ -32,12 +32,12 @@ export const MetricsCards: React.FC<MetricsCardsProps> = ({ metrics, initialFami
       {/* 結論文 */}
       <section
         aria-label="計算結果の要約"
-        className="bg-white rounded-2xl border border-stone-200 px-6 sm:px-8 py-7"
+        className="glass rounded-2xl border border-stone-200 px-6 sm:px-8 py-7"
       >
         {metrics.familyHoursPerWeek > 0 ? (
           <p className="text-xl sm:text-2xl leading-relaxed text-stone-700 font-medium text-balance">
             1週間のうち{' '}
-            <strong className="text-4xl sm:text-5xl font-bold text-stone-900 tabular-nums align-baseline mx-0.5">
+            <strong className="metric-num text-4xl sm:text-5xl font-bold text-stone-900 align-baseline mx-0.5">
               {displayFamilyHours}
             </strong>
             <span className="text-stone-900 font-bold">時間</span>

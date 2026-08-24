@@ -9,6 +9,7 @@
 
 import React from 'react';
 import { Clock } from 'lucide-react';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 export type ActiveTab = 'timeline' | 'gov' | 'admin';
 
@@ -20,7 +21,7 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({ activeTab, onSelectTab, onHome }) => {
   return (
-    <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-sm border-b border-stone-200/80 no-print">
+    <header className="sticky top-0 z-40 glass border-b border-stone-200/80 no-print">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-14 gap-4">
           {/* ブランド */}
@@ -38,7 +39,8 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, onSelectTab, onHome }
             </span>
           </button>
 
-          {/* 関係者向けリンク（控えめに） */}
+          {/* 関係者向けリンクと表示設定 */}
+          <div className="flex items-center gap-1">
           <nav className="flex items-center gap-0.5 text-[13px]" aria-label="関係者向け">
             {activeTab !== 'timeline' && (
               <button
@@ -74,6 +76,9 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, onSelectTab, onHome }
               サービス管理
             </button>
           </nav>
+          <span className="w-px h-5 bg-stone-200 mx-1" aria-hidden="true" />
+          <ThemeToggle />
+          </div>
         </div>
       </div>
     </header>

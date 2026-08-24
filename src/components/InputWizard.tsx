@@ -273,7 +273,7 @@ export const InputWizard: React.FC<InputWizardProps> = ({
   ];
 
   return (
-    <div className="bg-white rounded-xl border border-stone-200 overflow-hidden max-w-3xl mx-auto my-6">
+    <div className="glass rounded-xl border border-stone-200 overflow-hidden max-w-3xl mx-auto my-6">
       {/* ヘッダー */}
       <div className="px-6 py-5 border-b border-stone-200">
         <div className="flex items-start justify-between gap-4">

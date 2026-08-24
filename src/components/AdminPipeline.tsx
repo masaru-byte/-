@@ -84,7 +84,7 @@ export const AdminPipeline: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       {/* 管理ヘッダー */}
-      <div className="bg-white p-6 sm:p-8 rounded-xl border border-stone-200 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div className="glass p-6 sm:p-8 rounded-xl border border-stone-200 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center space-x-2 text-orange-700 text-xs font-bold tracking-wide">
             <Bot className="w-4 h-4" />
@@ -139,23 +139,23 @@ export const AdminPipeline: React.FC = () => {
 
       {/* 統計バー */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div className="bg-white p-4 rounded-lg border border-stone-200 shadow-sm">
+        <div className="glass p-4 rounded-lg border border-stone-200 shadow-sm">
           <span className="text-xs text-stone-500 block">総サービス件数</span>
           <span className="text-2xl font-bold text-stone-900">{servicesList.length} 件</span>
         </div>
-        <div className="bg-white p-4 rounded-lg border border-stone-200 shadow-sm">
+        <div className="glass p-4 rounded-lg border border-stone-200 shadow-sm">
           <span className="text-xs text-emerald-600 font-bold block">公開中（Approved）</span>
           <span className="text-2xl font-bold text-emerald-700">
             {servicesList.filter((s) => s.status === 'approved').length} 件
           </span>
         </div>
-        <div className="bg-white p-4 rounded-lg border border-stone-200 shadow-sm">
+        <div className="glass p-4 rounded-lg border border-stone-200 shadow-sm">
           <span className="text-xs text-amber-600 font-bold block">人手承認待ち（Draft）</span>
           <span className="text-2xl font-bold text-amber-700">
             {servicesList.filter((s) => s.status === 'draft').length} 件
           </span>
         </div>
-        <div className="bg-white p-4 rounded-lg border border-stone-200 shadow-sm">
+        <div className="glass p-4 rounded-lg border border-stone-200 shadow-sm">
           <span className="text-xs text-rose-600 font-bold block">却下 / 非公開</span>
           <span className="text-2xl font-bold text-rose-700">
             {servicesList.filter((s) => s.status === 'rejected' || s.status === 'stale').length} 件
@@ -164,7 +164,7 @@ export const AdminPipeline: React.FC = () => {
       </div>
 
       {/* フィルター＆検索 */}
-      <div className="bg-white p-4 rounded-lg border border-stone-200 shadow-sm flex flex-wrap items-center justify-between gap-3">
+      <div className="glass p-4 rounded-lg border border-stone-200 shadow-sm flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center space-x-2">
           <button
             onClick={() => setFilterStatus('all')}
@@ -205,7 +205,7 @@ export const AdminPipeline: React.FC = () => {
       </div>
 
       {/* サービス一覧テーブル */}
-      <div className="bg-white rounded-xl border border-stone-200 shadow-sm overflow-hidden">
+      <div className="glass rounded-xl border border-stone-200 shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs border-collapse">
             <thead className="bg-stone-50 text-stone-700 border-b border-stone-200">

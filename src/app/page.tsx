@@ -219,7 +219,7 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-stone-50 text-stone-900 selection:bg-orange-500 selection:text-white">
+    <div className="min-h-screen flex flex-col">
       {/* グローバルヘッダー */}
       <Header
         activeTab={activeTab}
@@ -296,7 +296,7 @@ export default function HomePage() {
                     <button
                       type="button"
                       onClick={handleLoadDemo}
-                      className="press w-full sm:w-auto px-8 h-12 rounded-xl border border-stone-300 hover:bg-white text-stone-700 font-semibold text-base transition-colors"
+                      className="press w-full sm:w-auto px-8 h-12 rounded-xl border border-stone-300 hover:glass text-stone-700 font-semibold text-base transition-colors"
                     >
                       入力例で見てみる
                     </button>
@@ -334,7 +334,7 @@ export default function HomePage() {
                   />
 
                   {/* 条件と予算（コンパクトな1枚） */}
-                  <div className="bg-white rounded-2xl border border-stone-200 px-5 sm:px-6 py-4">
+                  <div className="glass rounded-2xl border border-stone-200 px-5 sm:px-6 py-4">
                     <div className="flex flex-wrap items-center justify-between gap-3">
                       <p className="text-sm text-stone-600 min-w-0">
                         <span className="font-bold text-stone-900">
@@ -386,12 +386,12 @@ export default function HomePage() {
                     {/* 予算 */}
                     <div className="mt-4 pt-4 border-t border-stone-100">
                       <div className="flex items-baseline justify-between gap-3 mb-1.5">
-                        <label htmlFor="budget-range" className="text-[13px] text-stone-500">
+                        <label htmlFor="budget-range" className="micro-label">
                           月の予算 —— 動かすと組み合わせを作り直します
                         </label>
                         <div className="flex items-baseline gap-3 shrink-0">
                           <span
-                            className="tint text-lg font-bold text-stone-900 tabular-nums"
+                            className="tint metric-num text-lg font-bold text-stone-900"
                             data-live={isBudgetLive ? 'true' : 'false'}
                           >
                             ¥{monthlyBudget.toLocaleString()}
@@ -477,7 +477,7 @@ export default function HomePage() {
       />
 
       {/* 免責事項・フッター（全画面共通） */}
-      <footer className="bg-white border-t border-stone-200 py-6 px-4 text-center text-xs text-stone-500 space-y-2 no-print">
+      <footer className="glass border-t border-stone-200 py-6 px-4 text-center text-xs text-stone-500 space-y-2 no-print">
         <div className="max-w-4xl mx-auto flex items-center justify-center space-x-2 text-stone-600 font-semibold">
           <HelpCircle className="w-4 h-4 text-orange-600" />
           <span>免責事項 ＆ 掲載基準について</span>

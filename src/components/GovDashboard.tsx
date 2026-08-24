@@ -158,7 +158,7 @@ export const GovDashboard: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       {/* ダッシュボードヘッダー */}
-      <div className="bg-white p-6 sm:p-8 rounded-xl border border-stone-200 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div className="glass p-6 sm:p-8 rounded-xl border border-stone-200 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center space-x-2 text-orange-700 text-xs font-bold tracking-wide">
             <Building2 className="w-4 h-4" />
@@ -173,7 +173,7 @@ export const GovDashboard: React.FC = () => {
           </p>
         </div>
 
-        <div className="flex items-center space-x-2 bg-white p-2 rounded-lg border border-stone-300">
+        <div className="flex items-center space-x-2 glass p-2 rounded-lg border border-stone-300">
           <Calendar className="w-4 h-4 text-stone-400 ml-1" />
           <select
             value={selectedPeriod}
@@ -189,7 +189,7 @@ export const GovDashboard: React.FC = () => {
 
       {/* 政策主要KPIカード（4指標） */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white p-5 rounded-lg border border-stone-200 shadow-sm space-y-2">
+        <div className="glass p-5 rounded-lg border border-stone-200 shadow-sm space-y-2">
           <div className="flex items-center justify-between text-xs text-stone-500 font-semibold">
             <span>総検索ログ数</span>
             <span className="p-1.5 rounded-lg bg-stone-50 text-stone-700">市内全域</span>
@@ -203,7 +203,7 @@ export const GovDashboard: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-white p-5 rounded-lg border border-stone-200 shadow-sm space-y-2">
+        <div className="glass p-5 rounded-lg border border-stone-200 shadow-sm space-y-2">
           <div className="flex items-center justify-between text-xs text-stone-500 font-semibold">
             <span>未充足需要率（0件ヒット）</span>
             <span className="p-1.5 rounded-lg bg-rose-50 text-rose-700 font-bold">空白リスク</span>
@@ -216,7 +216,7 @@ export const GovDashboard: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-white p-5 rounded-lg border border-stone-200 shadow-sm space-y-2">
+        <div className="glass p-5 rounded-lg border border-stone-200 shadow-sm space-y-2">
           <div className="flex items-center justify-between text-xs text-stone-500 font-semibold">
             <span>供給が特に不足している枠</span>
             <span className="p-1.5 rounded-lg bg-orange-50 text-orange-700 font-bold">要対策</span>
@@ -229,7 +229,7 @@ export const GovDashboard: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-white p-5 rounded-lg border border-stone-200 shadow-sm space-y-2">
+        <div className="glass p-5 rounded-lg border border-stone-200 shadow-sm space-y-2">
           <div className="flex items-center justify-between text-xs text-stone-500 font-semibold">
             <span>登録済み承認サービス数</span>
             <span className="p-1.5 rounded-lg bg-amber-50 text-amber-700">市内・近隣</span>
@@ -246,7 +246,7 @@ export const GovDashboard: React.FC = () => {
       {/* メイン分析セクション（ヒートマップ ＆ ランキング） */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* 左側: 需要×供給空白ヒートマップ（7カラム） */}
-        <div className="lg:col-span-7 bg-white p-6 rounded-xl border border-stone-200 shadow-sm space-y-4">
+        <div className="lg:col-span-7 glass p-6 rounded-xl border border-stone-200 shadow-sm space-y-4">
           <div className="flex items-center justify-between pb-3 border-b border-stone-100">
             <div>
               <h3 className="font-bold text-base text-stone-900 flex items-center space-x-2">
@@ -356,7 +356,7 @@ export const GovDashboard: React.FC = () => {
         </div>
 
         {/* 右側: 未充足需要ランキング（5カラム） */}
-        <div className="lg:col-span-5 bg-white p-6 rounded-xl border border-stone-200 shadow-sm space-y-4">
+        <div className="lg:col-span-5 glass p-6 rounded-xl border border-stone-200 shadow-sm space-y-4">
           <div className="pb-3 border-b border-stone-100">
             <h3 className="font-bold text-base text-stone-900 flex items-center space-x-2">
               <AlertOctagon className="w-5 h-5 text-rose-600" />
@@ -409,7 +409,7 @@ export const GovDashboard: React.FC = () => {
       </div>
 
       {/* サービス空白地図・地区別集計 */}
-      <div className="bg-white p-6 rounded-xl border border-stone-200 shadow-sm space-y-4">
+      <div className="glass p-6 rounded-xl border border-stone-200 shadow-sm space-y-4">
         <div className="flex items-center justify-between pb-3 border-b border-stone-100">
           <div>
             <h3 className="font-bold text-base text-stone-900 flex items-center space-x-2">

@@ -31,7 +31,7 @@ export const RestrictionGuide: React.FC<RestrictionGuideProps> = ({
   );
 
   return (
-    <div className="bg-white rounded-xl border border-stone-200">
+    <div className="glass rounded-xl border border-stone-200">
       <button
         type="button"
         onClick={() => setIsOpen((v) => !v)}
@@ -100,7 +100,7 @@ export const RestrictionGuide: React.FC<RestrictionGuideProps> = ({
                 {rule.conditionText}
               </p>
 
-              <div className="text-[11px] text-stone-500 bg-white p-2.5 rounded-xl border border-stone-100 leading-relaxed">
+              <div className="text-[11px] text-stone-500 glass p-2.5 rounded-xl border border-stone-100 leading-relaxed">
                 💡 {rule.explanation}
               </div>
 

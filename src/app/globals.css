@@ -1,6 +1,135 @@
 @import "tailwindcss";
 
 /* ============================================================
+   けあしる ビジュアルテーマ「近未来」
+   ------------------------------------------------------------
+   Tailwind の色スケールそのものを再定義することで、
+   全11コンポーネントのクラスを書き換えずに世界観を差し替える。
+   スケールの意味（50=地に近い / 900=前面のテキスト）は維持している。
+   ============================================================ */
+@theme {
+  /* ---- 既定はライト。ダークは :root[data-theme="dark"] で上書きする ---- */
+  --color-stone-50:  #F1F5FA;
+  --color-stone-100: #E7EDF5;
+  --color-stone-200: #DCE4EF;
+  --color-stone-300: #C4D0E0;
+  --color-stone-400: #8496AD;
+  --color-stone-500: #64748B;
+  --color-stone-600: #4A5768;
+  --color-stone-700: #37424F;
+  --color-stone-800: #232C38;
+  --color-stone-900: #0F1720;
+  --color-stone-950: #070C12;
+
+  --color-orange-50:  color-mix(in oklab, #EA580C 8%, transparent);
+  --color-orange-100: color-mix(in oklab, #EA580C 14%, transparent);
+  --color-orange-200: color-mix(in oklab, #EA580C 28%, transparent);
+  --color-orange-300: #FDBA74;
+  --color-orange-500: #F97316;
+  --color-orange-600: #EA580C;
+  --color-orange-700: #C2410C;
+  --color-orange-800: #9A3412;
+  --color-orange-900: #7C2D12;
+
+  --color-emerald-50:  color-mix(in oklab, #059669 9%, transparent);
+  --color-emerald-100: color-mix(in oklab, #059669 15%, transparent);
+  --color-emerald-200: color-mix(in oklab, #059669 28%, transparent);
+  --color-emerald-300: #6EE7B7;
+  --color-emerald-500: #10B981;
+  --color-emerald-600: #059669;
+  --color-emerald-700: #047857;
+  --color-emerald-800: #065F46;
+  --color-emerald-900: #064E3B;
+
+  --color-rose-50:  color-mix(in oklab, #E11D48 9%, transparent);
+  --color-rose-100: color-mix(in oklab, #E11D48 15%, transparent);
+  --color-rose-200: color-mix(in oklab, #E11D48 28%, transparent);
+  --color-rose-300: #FDA4AF;
+  --color-rose-500: #F43F5E;
+  --color-rose-600: #E11D48;
+  --color-rose-700: #BE123C;
+  --color-rose-800: #9F1239;
+  --color-rose-900: #881337;
+
+  --color-amber-50:  color-mix(in oklab, #D97706 10%, transparent);
+  --color-amber-100: color-mix(in oklab, #D97706 16%, transparent);
+  --color-amber-200: color-mix(in oklab, #D97706 30%, transparent);
+  --color-amber-500: #F59E0B;
+  --color-amber-600: #D97706;
+  --color-amber-700: #B45309;
+  --color-amber-800: #92400E;
+  --color-amber-900: #78350F;
+
+  --color-sky-50:  color-mix(in oklab, #0284C7 9%, transparent);
+  --color-sky-200: color-mix(in oklab, #0284C7 28%, transparent);
+  --color-sky-800: #075985;
+  --color-sky-900: #0C4A6E;
+}
+
+/* ============================================================
+   ダークテーマ — 同じスケールの意味のまま、発光する側へ入れ替える
+   ============================================================ */
+:root[data-theme="dark"] {
+  --color-stone-50:  #141A24;
+  --color-stone-100: #1B2331;
+  --color-stone-200: #253044;
+  --color-stone-300: #31405A;
+  --color-stone-400: #6E7F98;
+  --color-stone-500: #8D9CB4;
+  --color-stone-600: #A7B4C8;
+  --color-stone-700: #C0CADA;
+  --color-stone-800: #D7DFEA;
+  --color-stone-900: #EDF2F8;
+  --color-stone-950: #F7FAFD;
+
+  --color-orange-50:  color-mix(in oklab, #FF7A2F 12%, transparent);
+  --color-orange-100: color-mix(in oklab, #FF7A2F 18%, transparent);
+  --color-orange-200: color-mix(in oklab, #FF7A2F 34%, transparent);
+  --color-orange-300: #C2591F;
+  --color-orange-500: #FF8F4D;
+  --color-orange-600: #FF7A2F;
+  --color-orange-700: #FF9E60;
+  --color-orange-800: #FFB98A;
+  --color-orange-900: #FFD3B4;
+
+  --color-emerald-50:  color-mix(in oklab, #35E0A1 12%, transparent);
+  --color-emerald-100: color-mix(in oklab, #35E0A1 18%, transparent);
+  --color-emerald-200: color-mix(in oklab, #35E0A1 32%, transparent);
+  --color-emerald-300: #7FF0C6;
+  --color-emerald-500: #35E0A1;
+  --color-emerald-600: #4BE7AF;
+  --color-emerald-700: #6BEDBF;
+  --color-emerald-800: #A5F4D8;
+  --color-emerald-900: #CFF9EA;
+
+  --color-rose-50:  color-mix(in oklab, #FF5A6E 12%, transparent);
+  --color-rose-100: color-mix(in oklab, #FF5A6E 18%, transparent);
+  --color-rose-200: color-mix(in oklab, #FF5A6E 32%, transparent);
+  --color-rose-300: #FF8E9C;
+  --color-rose-500: #FF5A6E;
+  --color-rose-600: #FF7183;
+  --color-rose-700: #FF8E9C;
+  --color-rose-800: #FFB3BD;
+  --color-rose-900: #FFD2D8;
+
+  --color-amber-50:  color-mix(in oklab, #FFC24D 12%, transparent);
+  --color-amber-100: color-mix(in oklab, #FFC24D 18%, transparent);
+  --color-amber-200: color-mix(in oklab, #FFC24D 32%, transparent);
+  --color-amber-500: #FFC24D;
+  --color-amber-600: #FFCB66;
+  --color-amber-700: #FFD684;
+  --color-amber-800: #FFE2A6;
+  --color-amber-900: #FFEDCB;
+
+  --color-sky-50:  color-mix(in oklab, #4DD8FF 12%, transparent);
+  --color-sky-200: color-mix(in oklab, #4DD8FF 32%, transparent);
+  --color-sky-800: #9BE7FF;
+  --color-sky-900: #C8F2FF;
+}
+
+
+
+/* ============================================================
    けあしる モーションシステム v1
 
    原則1: 登場は transition で組む（@keyframes ではない）
@@ -14,19 +143,31 @@
 @layer base {
   :root {
     /* ---- セマンティックカラー ---- */
-    --background: #fafaf9;
-    --foreground: #1c1917;
-    --accent: #ea580c;
-    --accent-hover: #c2410c;
+    --background: #F7F9FC;
+    --foreground: #0F1720;
+    --accent: #EA580C;
+    --accent-hover: #C2410C;
+    --accent-glow: color-mix(in oklab, #EA580C 30%, transparent);
+
+    /* ガラス面 */
+    --glass-bg: rgba(255, 255, 255, 0.74);
+    --glass-bg-strong: rgba(255, 255, 255, 0.94);
+    --glass-highlight: rgba(255, 255, 255, 0.9);
+    --glass-blur: blur(22px) saturate(150%);
+
+    /* 環境光 */
+    --amb-1: color-mix(in oklab, #EA580C 6%, transparent);
+    --amb-2: color-mix(in oklab, #0284C7 5%, transparent);
+    --track-empty: #DCE4EF;
 
     /* スロット状態カラー（担い手の色分け） */
-    --color-family-bg: #FCEBEB;
-    --color-family-text: #791F1F;
-    --color-family-border: #F7C5C5;
+    --color-family-bg: #FDECEE;
+    --color-family-text: #9F1239;
+    --color-family-border: #F7C9D0;
 
-    --color-insurance-bg: #E1F5EE;
-    --color-insurance-text: #085041;
-    --color-insurance-border: #B5EAD7;
+    --color-insurance-bg: #E3F6EE;
+    --color-insurance-text: #065F46;
+    --color-insurance-border: #B3E7D2;
 
     --color-paid-bg: #FFF1E3;
     --color-paid-text: #9A3412;
@@ -61,6 +202,20 @@
 
   body {
     background-color: var(--background);
+    /* 上方からの環境光。近未来的な奥行きはここで作る */
+    background-image:
+      radial-gradient(
+        120% 70% at 50% -10%,
+        var(--amb-1) 0%,
+        transparent 62%
+      ),
+      radial-gradient(
+        90% 60% at 88% 4%,
+        var(--amb-2) 0%,
+        transparent 58%
+      );
+    background-attachment: fixed;
+    background-repeat: no-repeat;
     color: var(--foreground);
     font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans",
       "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic Medium", Meiryo,
@@ -77,9 +232,103 @@
   }
 
   ::selection {
-    background: #ffedd5;
-    color: #7c2d12;
+    background: color-mix(in oklab, #FF7A2F 42%, transparent);
+    color: #FFFFFF;
   }
+}
+
+
+/* ============================================================
+   ガラス面 — 近未来的な奥行きの実体
+   影で持ち上げるのではなく、透過と内側のハイライトで層を作る
+   ============================================================ */
+.glass {
+  background-color: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: inset 0 1px 0 var(--glass-highlight);
+}
+
+/* モーダルなど、背後を読ませたくない面 */
+.glass-solid {
+  background-color: var(--glass-bg-strong);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: inset 0 1px 0 var(--glass-highlight),
+    0 24px 64px -12px rgba(0, 0, 0, 0.7);
+}
+
+/* 発光するアクセント。押せるものだけが光る */
+.glow {
+  box-shadow: 0 0 0 1px color-mix(in oklab, #FF7A2F 45%, transparent),
+    0 6px 24px -6px var(--accent-glow);
+}
+@media (hover: hover) and (pointer: fine) {
+  .glow:hover {
+    box-shadow: 0 0 0 1px color-mix(in oklab, #FF7A2F 65%, transparent),
+      0 8px 32px -6px color-mix(in oklab, #FF7A2F 55%, transparent);
+  }
+}
+
+/* 計器らしい極小ラベル */
+.micro-label {
+  font-size: 11px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--color-stone-400, #6E7F98);
+}
+
+/* 数字は必ず等幅で、わずかに詰める */
+.metric-num {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+/* スクリム（ダークではより深く） */
+.scrim { background-color: rgba(15, 23, 32, 0.55); }
+:root[data-theme="dark"] .scrim { background-color: rgba(4, 6, 10, 0.72); }
+
+/* テーマ切替時に面と文字が滑らかに入れ替わる */
+body,
+.glass,
+.glass-solid {
+  transition: background-color var(--dur-base) var(--ease-inout),
+    color var(--dur-base) var(--ease-inout);
+}
+
+/* ダーク側のセマンティックトークン */
+:root[data-theme="dark"] {
+  --background: #080B11;
+  --foreground: #EDF2F8;
+  --accent: #FF7A2F;
+  --accent-hover: #FF8F4D;
+  --accent-glow: color-mix(in oklab, #FF7A2F 38%, transparent);
+
+  --glass-bg: rgba(255, 255, 255, 0.045);
+  --glass-bg-strong: rgba(20, 26, 38, 0.9);
+  --glass-highlight: rgba(255, 255, 255, 0.07);
+  --glass-blur: blur(22px) saturate(140%);
+
+  --amb-1: color-mix(in oklab, #FF7A2F 9%, transparent);
+  --amb-2: color-mix(in oklab, #4DD8FF 6%, transparent);
+  --track-empty: rgba(255, 255, 255, 0.12);
+
+  --color-family-bg: rgba(255, 90, 110, 0.11);
+  --color-family-text: #FFB3BD;
+  --color-family-border: rgba(255, 90, 110, 0.34);
+
+  --color-insurance-bg: rgba(53, 224, 161, 0.11);
+  --color-insurance-text: #A5F4D8;
+  --color-insurance-border: rgba(53, 224, 161, 0.32);
+
+  --color-paid-bg: rgba(255, 122, 47, 0.12);
+  --color-paid-text: #FFC9A0;
+  --color-paid-border: rgba(255, 122, 47, 0.34);
+
+  --kea-shadow-rest: 0 1px 0 var(--glass-highlight);
+  --kea-shadow-lift: 0 12px 32px -10px rgba(0, 0, 0, 0.66),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 /* ============================================================
@@ -291,6 +540,11 @@
   transform: scale(1);
 }
 
+/* 色の付いたマスは、塗りではなく発光として見せる */
+.slot-lit {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07);
+}
+
 /* ============================================================
    .slot-transition — 既存クラスの修理
    transform と opacity が抜けており hover と drag が瞬間切替だった
@@ -331,8 +585,8 @@ input[type="range"]::-webkit-slider-runnable-track {
     to right,
     var(--accent) 0%,
     var(--accent) var(--range-progress, 0%),
-    #e7e5e4 var(--range-progress, 0%),
-    #e7e5e4 100%
+    var(--track-empty) var(--range-progress, 0%),
+    var(--track-empty) 100%
   );
 }
 input[type="range"]::-webkit-slider-thumb {
@@ -342,9 +596,10 @@ input[type="range"]::-webkit-slider-thumb {
   height: 22px;
   margin-top: -8px;
   border-radius: 9999px;
-  background: #ffffff;
-  border: 1px solid #d6d3d1;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
+  background: #FFFFFF;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.6),
+    0 0 16px -2px var(--accent-glow);
   transition: box-shadow var(--dur-fast) var(--ease-out),
     border-color var(--dur-fast) linear;
 }
@@ -361,7 +616,7 @@ input[type="range"]:active::-webkit-slider-thumb {
 input[type="range"]::-moz-range-track {
   height: 6px;
   border-radius: 9999px;
-  background: #e7e5e4;
+  background: var(--track-empty);
 }
 input[type="range"]::-moz-range-progress {
   height: 6px;
@@ -372,9 +627,9 @@ input[type="range"]::-moz-range-thumb {
   width: 22px;
   height: 22px;
   border-radius: 9999px;
-  background: #ffffff;
-  border: 1px solid #d6d3d1;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
+  background: #FFFFFF;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.6), 0 0 16px -2px var(--accent-glow);
   transition: box-shadow var(--dur-fast) var(--ease-out);
 }
 input[type="range"]:active::-moz-range-thumb {
@@ -434,10 +689,22 @@ input[type="range"]:active::-moz-range-thumb {
     margin: 10mm;
   }
 
+  /* 画面は暗色テーマだが、紙は必ず白地・黒文字に戻す */
   body {
     background: #ffffff !important;
+    background-image: none !important;
     color: #000000 !important;
     font-size: 12px !important;
+  }
+  .print-page,
+  .print-page * {
+    color: #000000 !important;
+  }
+  .glass,
+  .glass-solid {
+    background-color: #ffffff !important;
+    backdrop-filter: none !important;
+    box-shadow: none !important;
   }
 
   .no-print { display: none !important; }

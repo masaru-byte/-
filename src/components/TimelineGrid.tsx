@@ -61,11 +61,11 @@ export const TimelineGrid: React.FC<TimelineGridProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-xl p-4 sm:p-6 border border-stone-200">
+    <div className="glass rounded-xl p-4 sm:p-6 border border-stone-200">
       {/* 凡例バー */}
       <div className="flex flex-wrap items-center justify-between gap-3 pb-4 mb-4 border-b border-stone-100 no-print">
         <div className="flex flex-wrap items-center gap-2 text-xs text-stone-500 font-medium">
-          <span className="shrink-0">担い手の色分け:</span>
+          <span className="micro-label shrink-0">担い手</span>
           <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-[#FCEBEB] text-[#791F1F] border border-[#F7C5C5]">
             <span className="w-2 h-2 rounded-full bg-[#791F1F] mr-1.5" />
             家族が担う
@@ -180,7 +180,7 @@ export const TimelineGrid: React.FC<TimelineGridProps> = ({
                       ['--rv-step' as string]: 'var(--stag-tight)',
                       ['--rv-dur' as string]: 'var(--dur-base)',
                     }}
-                    className={`min-w-0 overflow-hidden min-h-[88px] p-2.5 rounded-lg border cursor-pointer slot-transition lift press-sm slot-droppable flex flex-col justify-between select-none ${colorConfig.cardClass} ${grid.item(pi + dayIndex).className} ${
+                    className={`min-w-0 overflow-hidden min-h-[88px] p-2.5 rounded-lg border cursor-pointer slot-transition slot-lit lift press-sm slot-droppable flex flex-col justify-between select-none ${colorConfig.cardClass} ${grid.item(pi + dayIndex).className} ${
                       isDragging ? 'slot-dragging' : ''
                     }`}
                   >

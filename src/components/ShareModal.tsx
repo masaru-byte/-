@@ -45,7 +45,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose }) => {
       }}
     >
       <div
-        className="panel panel-from-top bg-white rounded-xl max-w-lg w-full p-6 shadow-2xl border border-stone-200 space-y-5"
+        className="panel panel-from-top glass-solid rounded-xl max-w-lg w-full p-6 shadow-2xl border border-stone-200 space-y-5"
         data-state={state}
         role="dialog"
         aria-modal="true"

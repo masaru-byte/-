@@ -103,7 +103,7 @@ const SlotDetailModalInner: React.FC<SlotDetailModalInnerProps> = ({
       }}
     >
       <div
-        className="panel bg-white rounded-xl max-w-2xl w-full shadow-2xl border border-stone-200 overflow-hidden"
+        className="panel glass-solid rounded-xl max-w-2xl w-full shadow-2xl border border-stone-200 overflow-hidden"
         data-state={panelState}
         role="dialog"
         aria-modal="true"
@@ -111,7 +111,7 @@ const SlotDetailModalInner: React.FC<SlotDetailModalInnerProps> = ({
         {/* モーダルヘッダー */}
         <div className="bg-orange-50 border-b border-orange-200 px-6 py-5 flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="p-2.5 rounded-lg bg-white text-orange-600 border border-orange-200">
+            <div className="p-2.5 rounded-lg glass text-orange-600 border border-orange-200">
               <Clock className="w-5 h-5" />
             </div>
             <div>
@@ -125,7 +125,7 @@ const SlotDetailModalInner: React.FC<SlotDetailModalInnerProps> = ({
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-lg text-stone-500 hover:text-stone-900 hover:bg-white transition-colors"
+            className="p-2 rounded-lg text-stone-500 hover:text-stone-900 hover:glass transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -147,7 +147,7 @@ const SlotDetailModalInner: React.FC<SlotDetailModalInnerProps> = ({
                   <button
                     type="button"
                     onClick={() => onChangeNeed(null)}
-                    className="inline-flex items-center gap-1 h-9 px-3 rounded-lg border border-stone-300 text-stone-600 hover:bg-white text-xs font-bold transition-colors"
+                    className="inline-flex items-center gap-1 h-9 px-3 rounded-lg border border-stone-300 text-stone-600 hover:glass text-xs font-bold transition-colors"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                     空きにする
@@ -159,7 +159,7 @@ const SlotDetailModalInner: React.FC<SlotDetailModalInnerProps> = ({
                   aria-expanded={isNeedPickerOpen}
                   className={`inline-flex items-center gap-1 h-9 px-3 rounded-lg text-xs font-bold transition-colors ${
                     slot.needsTagId
-                      ? 'border border-stone-300 text-stone-600 hover:bg-white'
+                      ? 'border border-stone-300 text-stone-600 hover:glass'
                       : 'bg-orange-600 text-white hover:bg-orange-700'
                   }`}
                 >
@@ -247,7 +247,7 @@ const SlotDetailModalInner: React.FC<SlotDetailModalInnerProps> = ({
                 value={personName}
                 onChange={(e) => setPersonName(e.target.value)}
                 onBlur={handleSavePerson}
-                className="flex-1 text-xs px-3 py-1.5 rounded-lg border border-stone-300 focus:outline-orange-600 bg-white"
+                className="flex-1 text-xs px-3 py-1.5 rounded-lg border border-stone-300 focus:outline-orange-600 glass"
               />
               <button
                 type="button"
@@ -287,7 +287,7 @@ const SlotDetailModalInner: React.FC<SlotDetailModalInnerProps> = ({
                     この需要は匿名ログとして記録され、自治体向けのサービス拡充要望ヒートマップに反映されます。
                   </p>
                 </div>
-                <div className="text-[11px] text-stone-600 bg-white p-3 rounded-xl border border-amber-200 inline-block text-left">
+                <div className="text-[11px] text-stone-600 glass p-3 rounded-xl border border-amber-200 inline-block text-left">
                   <strong>相談窓口</strong>: お近くの地域包括支援センター（あんしんすこやかセンター）または担当ケアマネジャーにご相談ください。
                 </div>
               </div>
@@ -330,7 +330,7 @@ const SlotDetailModalInner: React.FC<SlotDetailModalInnerProps> = ({
                           className={`flex items-center space-x-1 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
                             isAssigned
                               ? 'bg-orange-600 text-white shadow-xs'
-                              : 'bg-white border border-stone-300 hover:bg-stone-100 text-stone-700'
+                              : 'glass border border-stone-300 hover:bg-stone-100 text-stone-700'
                           }`}
                         >
                           {isAssigned ? (
@@ -351,13 +351,13 @@ const SlotDetailModalInner: React.FC<SlotDetailModalInnerProps> = ({
 
                       {/* 費用 ＆ 家族時間削減効果 */}
                       <div className="mt-3 pt-2 border-t border-stone-200/60 grid grid-cols-2 gap-2 text-xs">
-                        <div className="bg-white/80 p-2 rounded-xl border border-stone-100">
+                        <div className="bg-stone-50 p-2 rounded-xl border border-stone-200">
                           <span className="text-[11px] text-stone-500 block">自己負担目安</span>
                           <span className="font-bold text-stone-900">
                             {srv.price === 0 ? '無料' : `約 ${srv.price.toLocaleString()} 円 / 回`}
                           </span>
                         </div>
-                        <div className="bg-white/80 p-2 rounded-xl border border-stone-100">
+                        <div className="bg-stone-50 p-2 rounded-xl border border-stone-200">
                           <span className="text-[11px] text-stone-500 block">家族時間の削減</span>
                           <span className="font-bold text-emerald-700">
                             1回あたり {srv.reductionHours} 時間

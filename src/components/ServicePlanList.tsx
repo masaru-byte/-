@@ -52,14 +52,14 @@ export const ServicePlanList: React.FC<ServicePlanListProps> = ({ slots, onSelec
 
   if (rows.length === 0) {
     return (
-      <div className="bg-white rounded-xl border border-stone-200 p-6 text-center text-sm text-stone-500">
+      <div className="glass rounded-xl border border-stone-200 p-6 text-center text-sm text-stone-500">
         まだサービスが割り当てられていません。予算を上げるか、マス目から個別に選んでください。
       </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-xl border border-stone-200 overflow-hidden">
+    <div className="glass rounded-xl border border-stone-200 overflow-hidden">
       <div className="px-4 sm:px-5 py-3 border-b border-stone-200 flex items-baseline justify-between gap-3">
         <h2 className="text-sm font-bold text-stone-900">
           このプランで使うサービス
