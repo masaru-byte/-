@@ -15,7 +15,8 @@
 
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
+import { useReveal } from '@/hooks/useReveal';
 import {
   CARE_LEVEL_LIMITS,
   DEMO_SAMPLE_INPUT,
@@ -91,10 +92,22 @@ export default function HomePage() {
     return initialSlots.reduce((sum, s) => sum + (s.needsTagId ? s.effectiveHours : 0), 0);
   }, [initialSlots]);
 
+  // 予算スライダーを操作している最中かどうか（動きの速度を切り替えるために使う）
+  const [isBudgetLive, setIsBudgetLive] = useState(false);
+  const liveTimer = useRef<number | null>(null);
+
+  useEffect(() => () => {
+    if (liveTimer.current) window.clearTimeout(liveTimer.current);
+  }, []);
+
   // 予算スライダー変更（即時再割り当て）
   const handleBudgetChange = (newBudget: number) => {
     setMonthlyBudget(newBudget);
     setCurrentSlots(buildOptimizedSlots(userInput, newBudget));
+
+    setIsBudgetLive(true);
+    if (liveTimer.current) window.clearTimeout(liveTimer.current);
+    liveTimer.current = window.setTimeout(() => setIsBudgetLive(false), 420);
   };
 
   // 手動調整をやめて、最適な割り当てに戻す
@@ -132,6 +145,41 @@ export default function HomePage() {
     setActiveSlot(null);
   };
 
+  /**
+   * この枠の予定（困りごと）を変更する。null で空き枠に戻す。
+   * 予定が変わると必要時間そのものが変わるため、割り当てを計算し直す。
+   * 担当者メモだけは利用者が手で書いたものなので引き継ぐ。
+   */
+  const handleChangeNeedForSlot = (needId: string | null) => {
+    if (!activeSlot) return;
+
+    const nextInput: UserInputData = {
+      ...userInput,
+      slotNeeds: { ...userInput.slotNeeds, [activeSlot.id]: needId },
+      selectedNeeds:
+        needId && !userInput.selectedNeeds.includes(needId)
+          ? [...userInput.selectedNeeds, needId]
+          : userInput.selectedNeeds,
+    };
+
+    setUserInput(nextInput);
+
+    const rebuilt = buildOptimizedSlots(nextInput, monthlyBudget);
+    setCurrentSlots((prev) =>
+      rebuilt.map((fresh) => {
+        const before = prev.find((s) => s.id === fresh.id);
+        return before?.assignedPerson
+          ? { ...fresh, assignedPerson: before.assignedPerson }
+          : fresh;
+      })
+    );
+
+    // 予定を入れた直後は、その枠の候補をそのまま見せたいので開いたままにする
+    setActiveSlot(
+      needId ? rebuilt.find((sl) => sl.id === activeSlot.id) ?? null : null
+    );
+  };
+
   // 担当者メモの更新（ブラウザ内保持）
   const handleUpdatePerson = (personName: string) => {
     if (!activeSlot) return;
@@ -161,6 +209,9 @@ export default function HomePage() {
     setHasStarted(true);
     setCurrentSlots(buildOptimizedSlots(newData, newData.monthlyBudget));
   };
+
+  // ランディングの登場シーケンス（ファーストビューなので即時発火）
+  const landing = useReveal<HTMLElement>({ immediate: true });
 
   // 印刷ダイアログの起動
   const handlePrint = () => {
@@ -201,28 +252,51 @@ export default function HomePage() {
                 />
               ) : !hasStarted ? (
                 /* ---------------- ランディング（初回訪問） ---------------- */
-                <section className="max-w-2xl mx-auto text-center pt-14 sm:pt-20 pb-10">
+                <section
+                  {...landing.containerProps}
+                  className={`max-w-2xl mx-auto text-center pt-14 sm:pt-20 pb-10 ${landing.containerProps.className ?? ''}`}
+                >
                   <h1 className="text-3xl sm:text-4xl font-bold text-stone-900 leading-snug">
-                    <span className="inline-block">介護に使っている時間、</span>
-                    <span className="inline-block">数えたことはありますか？</span>
+                    <span
+                      {...landing.item(0)}
+                      className={`inline-block ${landing.item(0).className}`}
+                      style={{ ...landing.item(0).style, ['--rv-y' as string]: '16px', ['--rv-blur' as string]: '2.5px', ['--rv-delay' as string]: '120ms' }}
+                    >
+                      介護に使っている時間、
+                    </span>
+                    <span
+                      {...landing.item(1)}
+                      className={`inline-block ${landing.item(1).className}`}
+                      style={{ ...landing.item(1).style, ['--rv-y' as string]: '16px', ['--rv-blur' as string]: '2.5px', ['--rv-delay' as string]: '120ms', ['--rv-step' as string]: '80ms' }}
+                    >
+                      数えたことはありますか？
+                    </span>
                   </h1>
-                  <p className="mt-5 text-base sm:text-lg text-stone-600 leading-relaxed text-balance">
+                  <p
+                    {...landing.item(4)}
+                    className={`mt-5 text-base sm:text-lg text-stone-600 leading-relaxed text-balance ${landing.item(4).className}`}
+                    style={{ ...landing.item(4).style, ['--rv-y' as string]: '10px', ['--rv-delay' as string]: '120ms', ['--rv-step' as string]: '70ms' }}
+                  >
                     要介護度と困りごとを入れるだけで、1週間の介護タイムラインを作成。
                     介護保険で足りない部分を埋める地域のサービスと、その料金がわかります。
                   </p>
 
-                  <div className="mt-9 flex flex-col sm:flex-row items-center justify-center gap-3">
+                  <div
+                    {...landing.item(6)}
+                    className={`mt-9 flex flex-col sm:flex-row items-center justify-center gap-3 ${landing.item(6).className}`}
+                    style={{ ...landing.item(6).style, ['--rv-y' as string]: '10px', ['--rv-delay' as string]: '120ms', ['--rv-step' as string]: '70ms' }}
+                  >
                     <button
                       type="button"
                       onClick={() => setIsWizardOpen(true)}
-                      className="w-full sm:w-auto px-8 h-12 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-bold text-base transition-colors"
+                      className="press lift w-full sm:w-auto px-8 h-12 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-bold text-base transition-colors"
                     >
                       はじめる（約1分）
                     </button>
                     <button
                       type="button"
                       onClick={handleLoadDemo}
-                      className="w-full sm:w-auto px-8 h-12 rounded-xl border border-stone-300 hover:bg-white text-stone-700 font-semibold text-base transition-colors"
+                      className="press w-full sm:w-auto px-8 h-12 rounded-xl border border-stone-300 hover:bg-white text-stone-700 font-semibold text-base transition-colors"
                     >
                       入力例で見てみる
                     </button>
@@ -234,7 +308,12 @@ export default function HomePage() {
                       { n: '2', t: 'タイムラインが完成', d: '1週間28マスで「誰がいつ支えているか」が見えます。' },
                       { n: '3', t: 'サービスと料金を確認', d: '予算内で任せられるサービスと月額がその場でわかります。' },
                     ].map((step) => (
-                      <li key={step.n} className="flex gap-3">
+                      <li
+                        key={step.n}
+                        {...landing.item(5 + Number(step.n))}
+                        className={`flex gap-3 ${landing.item(0).className}`}
+                        style={{ ...landing.item(5 + Number(step.n)).style, ['--rv-y' as string]: '10px', ['--rv-delay' as string]: '120ms', ['--rv-step' as string]: '80ms' }}
+                      >
                         <span className="w-7 h-7 rounded-full bg-orange-100 text-orange-700 font-bold text-sm flex items-center justify-center shrink-0 mt-0.5">
                           {step.n}
                         </span>
@@ -311,7 +390,10 @@ export default function HomePage() {
                           月の予算 —— 動かすと組み合わせを作り直します
                         </label>
                         <div className="flex items-baseline gap-3 shrink-0">
-                          <span className="text-lg font-bold text-stone-900 tabular-nums">
+                          <span
+                            className="tint text-lg font-bold text-stone-900 tabular-nums"
+                            data-live={isBudgetLive ? 'true' : 'false'}
+                          >
                             ¥{monthlyBudget.toLocaleString()}
                           </span>
                           <button
@@ -349,6 +431,7 @@ export default function HomePage() {
                   <TimelineGrid
                     slots={currentSlots}
                     onSlotClick={(slot) => setActiveSlot(slot)}
+                    isLive={isBudgetLive}
                   />
 
                   {/* このプランで使うサービスの一覧 */}
@@ -384,6 +467,7 @@ export default function HomePage() {
         onClose={() => setActiveSlot(null)}
         onSelectService={handleSelectServiceForSlot}
         onUpdatePerson={handleUpdatePerson}
+        onChangeNeed={handleChangeNeedForSlot}
       />
 
       {/* 共有モーダル */}

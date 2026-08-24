@@ -8,6 +8,7 @@
 'use client';
 
 import React, { useMemo } from 'react';
+import { useReveal } from '@/hooks/useReveal';
 import { Service, TimelineSlot } from '@/types';
 import { SCHEME_LABELS } from '@/utils/colors';
 import { ExternalLink } from 'lucide-react';
@@ -25,6 +26,7 @@ interface PlanRow {
 }
 
 export const ServicePlanList: React.FC<ServicePlanListProps> = ({ slots, onSelectSlot }) => {
+  const list = useReveal<HTMLUListElement>();
   const rows = useMemo<PlanRow[]>(() => {
     const map = new Map<string, PlanRow>();
     for (const slot of slots) {
@@ -71,15 +73,23 @@ export const ServicePlanList: React.FC<ServicePlanListProps> = ({ slots, onSelec
         </span>
       </div>
 
-      <ul className="divide-y divide-stone-100">
-        {rows.map((row) => {
+      <ul
+        {...list.containerProps}
+        className={`divide-y divide-stone-100 ${list.containerProps.className ?? ''}`}
+      >
+        {rows.map((row, i) => {
           const scheme = SCHEME_LABELS[row.service.scheme];
           return (
-            <li key={row.service.id}>
+            <li
+              key={row.service.id}
+              {...list.item(i)}
+              style={{ ...list.item(i).style, ['--rv-y' as string]: '8px', ['--rv-step' as string]: 'var(--stag-base)', ['--rv-dur' as string]: 'var(--dur-base)' }}
+              className={list.item(i).className}
+            >
               <button
                 type="button"
                 onClick={() => onSelectSlot(row.firstSlot)}
-                className="w-full text-left px-4 sm:px-5 py-3.5 hover:bg-stone-50 transition-colors flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4"
+                className="press w-full text-left px-4 sm:px-5 py-3.5 hover:bg-stone-50 transition-colors flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4"
               >
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2 mb-1">

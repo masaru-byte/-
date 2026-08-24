@@ -9,6 +9,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useDelayedValue } from '@/hooks/useDelayedUnmount';
 import { DAYS_OF_WEEK, NEEDS_TAGS, TIME_PERIODS } from '@/constants/careConstants';
 import { CareLevel, HouseholdType, Service, TimelineSlot } from '@/types';
 import { SCHEME_LABELS, SLOT_COLORS } from '@/utils/colors';
@@ -22,6 +23,9 @@ import {
   ShieldCheck,
   User,
   AlertCircle,
+  CalendarPlus,
+  Trash2,
+  Pencil,
 } from 'lucide-react';
 
 interface SlotDetailModalProps {
@@ -31,18 +35,37 @@ interface SlotDetailModalProps {
   onClose: () => void;
   onSelectService: (service: Service | null) => void;
   onUpdatePerson: (personName: string) => void;
+  /** この枠の予定（困りごと）を差し替える。null を渡すと空き枠に戻す */
+  onChangeNeed: (needId: string | null) => void;
 }
 
-type SlotDetailModalInnerProps = Omit<SlotDetailModalProps, 'slot'> & { slot: TimelineSlot };
+/** 予定ピッカーのカテゴリ表示順 */
+const NEEDS_CATEGORY_ORDER: { key: string; label: string }[] = [
+  { key: 'housework', label: '家事' },
+  { key: 'physical_care', label: '身体介護' },
+  { key: 'monitoring', label: '見守り・安否確認' },
+  { key: 'outing', label: '外出の付き添い' },
+  { key: 'social', label: '社会参加・つながり' },
+  { key: 'housing', label: '住まい・環境' },
+  { key: 'family_rest', label: '家族の休息' },
+];
+
+type SlotDetailModalInnerProps = Omit<SlotDetailModalProps, 'slot'> & {
+  slot: TimelineSlot;
+  panelState: 'open' | 'closing';
+};
 
 /**
  * スロット未選択のときは何も描画しないラッパー。
  * フックを持たないので、ここでの早期 return は安全です。
  */
 export const SlotDetailModal: React.FC<SlotDetailModalProps> = ({ slot, ...rest }) => {
-  if (!slot) return null;
+  // 閉じる動きを見せるため、slot が null になっても少しだけ直前の内容を残す
+  const { shown, state } = useDelayedValue(slot);
+
+  if (!shown) return null;
   // key を渡すことで、対象スロットが変わったら担当者メモの入力状態をリセットする
-  return <SlotDetailModalInner key={slot.id} slot={slot} {...rest} />;
+  return <SlotDetailModalInner key={shown.id} slot={shown} panelState={state} {...rest} />;
 };
 
 const SlotDetailModalInner: React.FC<SlotDetailModalInnerProps> = ({
@@ -52,8 +75,12 @@ const SlotDetailModalInner: React.FC<SlotDetailModalInnerProps> = ({
   onClose,
   onSelectService,
   onUpdatePerson,
+  onChangeNeed,
+  panelState,
 }) => {
   const [personName, setPersonName] = useState<string>(slot.assignedPerson || '');
+  // 空き枠に予定を入れる／既存の予定を変更するピッカーの開閉
+  const [isNeedPickerOpen, setIsNeedPickerOpen] = useState<boolean>(!slot.needsTagId);
   const dayLabel = DAYS_OF_WEEK.find((d) => d.key === slot.day)?.label || '';
   const periodObj = TIME_PERIODS.find((p) => p.key === slot.period);
   const needTag = NEEDS_TAGS.find((t) => t.id === slot.needsTagId);
@@ -68,8 +95,19 @@ const SlotDetailModalInner: React.FC<SlotDetailModalInnerProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto no-print">
-      <div className="bg-white rounded-xl max-w-2xl w-full shadow-2xl border border-stone-200 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+    <div
+      className="scrim fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto no-print"
+      data-state={panelState}
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
+      <div
+        className="panel bg-white rounded-xl max-w-2xl w-full shadow-2xl border border-stone-200 overflow-hidden"
+        data-state={panelState}
+        role="dialog"
+        aria-modal="true"
+      >
         {/* モーダルヘッダー */}
         <div className="bg-orange-50 border-b border-orange-200 px-6 py-5 flex items-center justify-between">
           <div className="flex items-center space-x-3">
@@ -81,7 +119,7 @@ const SlotDetailModalInner: React.FC<SlotDetailModalInnerProps> = ({
                 {dayLabel} ・ {periodObj?.label}（{periodObj?.timeRange}）
               </div>
               <h3 className="text-lg font-bold text-stone-900">
-                {needTag ? needTag.name : '困りごとが未登録のスロット'}
+                {needTag ? needTag.name : 'この枠は空いています'}
               </h3>
             </div>
           </div>
@@ -95,6 +133,93 @@ const SlotDetailModalInner: React.FC<SlotDetailModalInnerProps> = ({
 
         {/* モーダル本文 */}
         <div className="p-6 space-y-6 max-h-[75vh] overflow-y-auto">
+          {/* この枠の予定（困りごと）の設定 */}
+          <div className="rounded-lg border border-stone-200 overflow-hidden">
+            <div className="px-4 py-3 bg-stone-50 border-b border-stone-200 flex items-center justify-between gap-3">
+              <div className="min-w-0">
+                <div className="text-[11px] text-stone-500">この枠の予定</div>
+                <div className="text-sm font-bold text-stone-900 truncate">
+                  {needTag ? needTag.name : '予定なし（空き）'}
+                </div>
+              </div>
+              <div className="flex items-center gap-1.5 shrink-0">
+                {slot.needsTagId && (
+                  <button
+                    type="button"
+                    onClick={() => onChangeNeed(null)}
+                    className="inline-flex items-center gap-1 h-9 px-3 rounded-lg border border-stone-300 text-stone-600 hover:bg-white text-xs font-bold transition-colors"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                    空きにする
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={() => setIsNeedPickerOpen((v) => !v)}
+                  aria-expanded={isNeedPickerOpen}
+                  className={`inline-flex items-center gap-1 h-9 px-3 rounded-lg text-xs font-bold transition-colors ${
+                    slot.needsTagId
+                      ? 'border border-stone-300 text-stone-600 hover:bg-white'
+                      : 'bg-orange-600 text-white hover:bg-orange-700'
+                  }`}
+                >
+                  {slot.needsTagId ? (
+                    <>
+                      <Pencil className="w-3.5 h-3.5" />
+                      変更
+                    </>
+                  ) : (
+                    <>
+                      <CalendarPlus className="w-3.5 h-3.5" />
+                      予定を入れる
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+
+            {isNeedPickerOpen && (
+              <div className="p-4 space-y-3 max-h-[220px] overflow-y-auto">
+                <p className="text-[11px] text-stone-500">
+                  この時間帯に発生する困りごとを選ぶと、条件に合うサービスを探し直します。
+                </p>
+                {NEEDS_CATEGORY_ORDER.map((cat) => {
+                  const tags = NEEDS_TAGS.filter((t) => t.category === cat.key);
+                  if (tags.length === 0) return null;
+                  return (
+                    <div key={cat.key}>
+                      <div className="text-[11px] font-bold text-stone-500 mb-1.5">
+                        {cat.label}
+                      </div>
+                      <div className="flex flex-wrap gap-1.5">
+                        {tags.map((tag) => {
+                          const isCurrent = slot.needsTagId === tag.id;
+                          return (
+                            <button
+                              key={tag.id}
+                              type="button"
+                              title={tag.description}
+                              onClick={() => onChangeNeed(tag.id)}
+                              aria-pressed={isCurrent}
+                              className={`inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border text-[11px] transition-colors ${
+                                isCurrent
+                                  ? 'border-orange-600 bg-orange-50 text-orange-900 font-bold'
+                                  : 'border-stone-300 text-stone-700 hover:bg-stone-50'
+                              }`}
+                            >
+                              {isCurrent && <Check className="w-3 h-3 text-orange-600" />}
+                              {tag.name}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
           {/* 現在の状態 ＆ 担当者設定 */}
           <div className="bg-stone-50 p-4 rounded-lg border border-stone-200/80 space-y-3">
             <div className="flex flex-wrap items-center justify-between gap-2">
@@ -134,7 +259,8 @@ const SlotDetailModalInner: React.FC<SlotDetailModalInnerProps> = ({
             </div>
           </div>
 
-          {/* サービス候補一覧 */}
+          {/* サービス候補一覧（予定がある枠のみ） */}
+          {slot.needsTagId && (
           <div>
             <div className="flex items-center justify-between mb-3">
               <h4 className="text-sm font-bold text-stone-900 flex items-center space-x-1.5">
@@ -274,6 +400,7 @@ const SlotDetailModalInner: React.FC<SlotDetailModalInnerProps> = ({
               </div>
             )}
           </div>
+          )}
         </div>
 
         {/* モーダルフッター */}

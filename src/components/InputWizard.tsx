@@ -170,6 +170,8 @@ export const InputWizard: React.FC<InputWizardProps> = ({
   onLoadDemo,
 }) => {
   const [currentStep, setCurrentStep] = useState<number>(1);
+  // 前進か後退かで、切り替わる向きを変える
+  const [direction, setDirection] = useState<'fwd' | 'back'>('fwd');
   const [formData, setFormData] = useState<UserInputData>(initialData);
   // タスクごとの発生タイミング（ステップ4の入力源）
   const [schedule, setSchedule] = useState<TaskSchedule>(() =>
@@ -247,12 +249,19 @@ export const InputWizard: React.FC<InputWizardProps> = ({
   };
 
   const nextStep = () => {
-    if (currentStep < 5) setCurrentStep((prev) => prev + 1);
-    else onSubmit(formData);
+    if (currentStep < 5) {
+      setDirection('fwd');
+      setCurrentStep((prev) => prev + 1);
+    } else {
+      onSubmit(formData);
+    }
   };
 
   const prevStep = () => {
-    if (currentStep > 1) setCurrentStep((prev) => prev - 1);
+    if (currentStep > 1) {
+      setDirection('back');
+      setCurrentStep((prev) => prev - 1);
+    }
   };
 
   const STEP_TITLES = [
@@ -272,7 +281,7 @@ export const InputWizard: React.FC<InputWizardProps> = ({
             <span className="text-xs font-semibold text-orange-700 tracking-wide">
               ステップ {currentStep} / 5
             </span>
-            <h2 className="text-xl font-bold mt-0.5 text-stone-900">
+            <h2 key={currentStep} className="text-xl font-bold mt-0.5 text-stone-900 swap swap-tight">
               {STEP_TITLES[currentStep - 1]}
             </h2>
           </div>
@@ -305,7 +314,10 @@ export const InputWizard: React.FC<InputWizardProps> = ({
         </div>
       </div>
 
-      <div className="p-6 sm:p-7 min-h-[360px]">
+      <div
+        key={currentStep}
+        className={`p-6 sm:p-7 min-h-[360px] swap ${direction === 'fwd' ? 'swap-fwd' : 'swap-back'}`}
+      >
         {/* ---------------- Step 1: 要介護度 ---------------- */}
         {currentStep === 1 && (
           <div className="space-y-5">
@@ -331,7 +343,7 @@ export const InputWizard: React.FC<InputWizardProps> = ({
                           type="button"
                           onClick={() => handleCareLevelChange(level)}
                           aria-pressed={isSelected}
-                          className={`inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg border text-sm transition-colors ${
+                          className={`press inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg border text-sm transition-colors ${
                             isSelected
                               ? 'border-orange-600 bg-orange-50 text-orange-900 font-bold'
                               : 'border-stone-300 text-stone-700 hover:bg-stone-50 font-medium'
@@ -370,7 +382,7 @@ export const InputWizard: React.FC<InputWizardProps> = ({
                     type="button"
                     onClick={() => handleHouseholdChange(item.id)}
                     aria-pressed={isSelected}
-                    className={`text-left p-4 rounded-lg border transition-colors flex items-start gap-3 ${
+                    className={`press text-left p-4 rounded-lg border transition-colors flex items-start gap-3 ${
                       isSelected
                         ? 'border-orange-600 bg-orange-50'
                         : 'border-stone-300 hover:bg-stone-50'
@@ -444,7 +456,7 @@ export const InputWizard: React.FC<InputWizardProps> = ({
                             title={tag.description}
                             onClick={() => toggleNeed(tag.id)}
                             aria-pressed={isSelected}
-                            className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border text-xs transition-colors ${
+                            className={`press-sm inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border text-xs transition-colors ${
                               isSelected
                                 ? 'border-orange-600 bg-orange-50 text-orange-900 font-bold'
                                 : 'border-stone-300 text-stone-700 hover:bg-stone-50'
@@ -503,7 +515,8 @@ export const InputWizard: React.FC<InputWizardProps> = ({
                           {tag.name}
                         </span>
                         <span
-                          className={`shrink-0 text-[11px] font-bold px-2 py-0.5 rounded-full tabular-nums ${
+                          key={actual}
+                          className={`swap swap-tight shrink-0 text-[11px] font-bold px-2 py-0.5 rounded-full tabular-nums ${
                             actual > 0
                               ? 'bg-orange-50 text-orange-800 border border-orange-200'
                               : 'bg-stone-100 text-stone-500 border border-stone-200'
@@ -560,7 +573,7 @@ export const InputWizard: React.FC<InputWizardProps> = ({
                                 aria-pressed={on}
                                 aria-label={d.label}
                                 onClick={() => toggleTaskDay(needId, d.key)}
-                                className={`w-7 h-7 rounded-md border text-[11px] font-bold transition-colors ${
+                                className={`press-sm w-7 h-7 rounded-md border text-[11px] font-bold transition-colors ${
                                   on
                                     ? 'border-orange-600 bg-orange-600 text-white'
                                     : 'border-stone-300 text-stone-600 hover:bg-stone-50'
@@ -583,7 +596,7 @@ export const InputWizard: React.FC<InputWizardProps> = ({
                                 type="button"
                                 aria-pressed={on}
                                 onClick={() => toggleTaskPeriod(needId, tp.key)}
-                                className={`px-2.5 py-1 rounded-md border text-[11px] font-bold transition-colors ${
+                                className={`press-sm px-2.5 py-1 rounded-md border text-[11px] font-bold transition-colors ${
                                   on
                                     ? 'border-orange-600 bg-orange-50 text-orange-800'
                                     : 'border-stone-300 text-stone-600 hover:bg-stone-50'
@@ -693,7 +706,7 @@ export const InputWizard: React.FC<InputWizardProps> = ({
           <button
             type="button"
             onClick={nextStep}
-            className="flex items-center gap-1.5 px-6 py-2.5 rounded-lg bg-orange-600 hover:bg-orange-700 text-white font-bold text-sm transition-colors"
+            className="press lift flex items-center gap-1.5 px-6 py-2.5 rounded-lg bg-orange-600 hover:bg-orange-700 text-white font-bold text-sm transition-colors"
           >
             {currentStep === 5 ? 'サービスを当てはめる' : '次へ'}
             <ChevronRight className="w-4 h-4" />

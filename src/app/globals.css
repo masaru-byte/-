@@ -1,12 +1,23 @@
 @import "tailwindcss";
 
+/* ============================================================
+   けあしる モーションシステム v1
+
+   原則1: 登場は transition で組む（@keyframes ではない）
+   原則2: @keyframes は「再マウントの入れ替え」と「一度きりの合図」だけ
+   原則3: 要素の可視性を animation に依存させない（基底は必ず opacity:1）
+   原則4: 入りは速く、離れはゆっくり
+   原則5: 動かすのは transform / opacity / box-shadow / outline /
+          background-color / grid-template-rows のみ
+   ============================================================ */
+
 @layer base {
   :root {
-    /* ---- セマンティックトークン（HIG: 色は意味で定義する） ---- */
-    --background: #fafaf9;        /* stone-50: ページ地 */
-    --foreground: #1c1917;        /* stone-900: 本文 */
-    --accent: #ea580c;            /* orange-600: 操作できるもの専用 */
-    --accent-hover: #c2410c;      /* orange-700 */
+    /* ---- セマンティックカラー ---- */
+    --background: #fafaf9;
+    --foreground: #1c1917;
+    --accent: #ea580c;
+    --accent-hover: #c2410c;
 
     /* スロット状態カラー（担い手の色分け） */
     --color-family-bg: #FCEBEB;
@@ -20,10 +31,31 @@
     --color-paid-bg: #FFF1E3;
     --color-paid-text: #9A3412;
     --color-paid-border: #FBD3AE;
+
+    /* ---- モーション: duration は4段階のみ ---- */
+    --dur-instant: 90ms;   /* 押し込み */
+    --dur-fast: 180ms;     /* hover の入り・追従・退場 */
+    --dur-base: 320ms;     /* 状態変化・入れ替え・開閉 */
+    --dur-slow: 620ms;     /* 登場・一度きりの合図・冷却 */
+
+    /* ---- モーション: easing は3種のみ（オーバーシュートなし） ---- */
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-inout: cubic-bezier(0.4, 0, 0.2, 1);
+    --ease-in: cubic-bezier(0.4, 0, 1, 1);
+
+    /* ---- stagger: 1要素あたりの遅延 ---- */
+    --stag-tight: 26ms;  /* 28マスなど数の多い群 */
+    --stag-base: 45ms;   /* リスト行・候補カード */
+    --stag-wide: 90ms;   /* 3ステップなど順番に意味がある群 */
+
+    --kea-tint: rgba(234, 88, 12, 0.07);
+    --kea-ring: rgba(234, 88, 12, 0.28);
+    --kea-shadow-rest: 0 1px 2px rgba(28, 25, 23, 0.04);
+    --kea-shadow-lift: 0 8px 18px -6px rgba(28, 25, 23, 0.16),
+      0 2px 4px -2px rgba(28, 25, 23, 0.06);
   }
 
   html {
-    /* 日本語の詰め組みと数字の等幅を全体既定に */
     font-feature-settings: "palt" 1;
   }
 
@@ -37,7 +69,7 @@
     text-rendering: optimizeLegibility;
   }
 
-  /* キーボード操作時のフォーカスを全要素で可視化（HIG: アクセシビリティ） */
+  /* フォーカスリングにはトランジションを付けない（現在位置の判定が遅れるため） */
   :focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 2px;
@@ -45,28 +77,246 @@
   }
 
   ::selection {
-    background: #ffedd5; /* orange-100 */
+    background: #ffedd5;
     color: #7c2d12;
   }
 }
 
-/* スロット切り替えトランジション（0.35秒） */
-.slot-transition {
-  transition: background-color 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-    border-color 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-    color 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-    box-shadow 0.15s ease;
+/* ============================================================
+   .reveal — 登場の唯一の土台
+   SSR の素のHTMLでは opacity:1 のまま。JS が落ちても本文が読める。
+   .rv-armed は useReveal が rAF 1回分待ってから親に付ける。
+   ============================================================ */
+.reveal {
+  --rv-y: 12px;
+  --rv-dur: var(--dur-slow);
+  --rv-delay: 0ms;
+  --rv-i: 0;
+  --rv-step: 0ms;
+  --rv-blur: 0px;
+  pointer-events: auto;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .slot-transition,
-  * {
-    transition-duration: 0.01ms !important;
-    animation-duration: 0.01ms !important;
+:where(.rv-armed) .reveal {
+  opacity: 0;
+  transform: translate3d(0, var(--rv-y), 0);
+  filter: blur(var(--rv-blur));
+}
+
+.reveal.is-in {
+  opacity: 1;
+  transform: none;
+  filter: none;
+  transition:
+    opacity var(--rv-dur) var(--ease-out)
+      calc(var(--rv-delay) + var(--rv-i) * var(--rv-step)),
+    transform var(--rv-dur) var(--ease-out)
+      calc(var(--rv-delay) + var(--rv-i) * var(--rv-step)),
+    filter var(--rv-dur) var(--ease-out)
+      calc(var(--rv-delay) + var(--rv-i) * var(--rv-step));
+}
+
+/* ============================================================
+   .swap — key 変更による再マウントの入れ替え
+   ============================================================ */
+@keyframes keaSwapIn {
+  from {
+    opacity: 0;
+    transform: translate3d(var(--sw-x, 0px), var(--sw-y, 6px), 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
   }
 }
 
-/* ---- スライダー（ブランドアクセントで統一） ---- */
+.swap {
+  animation: keaSwapIn var(--dur-base) var(--ease-out) both;
+}
+.swap-fwd { --sw-x: 14px; --sw-y: 0px; }
+.swap-back { --sw-x: -14px; --sw-y: 0px; }
+.swap-tight { --sw-y: 4px; animation-duration: var(--dur-fast); }
+
+/* ============================================================
+   .tint — 操作中だけ体温を持つ／.tint-once — 単発の合図
+   素早く点り、ゆっくり冷める。inline のまま使う。
+   ============================================================ */
+.tint {
+  padding-inline: 3px;
+  margin-inline: -3px;
+  border-radius: 6px;
+  background-color: transparent;
+  transition:
+    background-color var(--dur-slow) var(--ease-in),
+    color var(--dur-slow) var(--ease-in);
+}
+.tint[data-live='true'] {
+  background-color: var(--kea-tint);
+  transition-duration: var(--dur-fast);
+  transition-timing-function: var(--ease-out);
+}
+
+@keyframes keaTintOnce {
+  0% { background-color: var(--kea-tint); }
+  100% { background-color: transparent; }
+}
+.tint-once {
+  animation: keaTintOnce var(--dur-slow) var(--ease-in) 1 both;
+}
+
+/* ============================================================
+   .ring-once — 一度きりの受理の合図（レイアウトに影響しない）
+   ============================================================ */
+@keyframes keaRingOnce {
+  0% { box-shadow: 0 0 0 0 rgba(234, 88, 12, 0); }
+  30% { box-shadow: 0 0 0 3px var(--kea-ring); }
+  100% { box-shadow: 0 0 0 0 rgba(234, 88, 12, 0); }
+}
+.ring-once {
+  animation: keaRingOnce var(--dur-slow) var(--ease-inout) 1 both;
+}
+.is-modal-open .ring-once { animation: none; }
+
+/* ============================================================
+   .lift — 面が持ち上がる hover（入り180ms・離れ320msの非対称）
+   ============================================================ */
+.lift {
+  box-shadow: var(--kea-shadow-rest);
+}
+@media (hover: hover) and (pointer: fine) {
+  .lift {
+    transition:
+      transform var(--dur-base) var(--ease-out),
+      box-shadow var(--dur-base) var(--ease-out);
+  }
+  .lift:hover {
+    transform: translate3d(0, -2px, 0);
+    box-shadow: var(--kea-shadow-lift);
+    transition-duration: var(--dur-fast);
+  }
+}
+
+/* ============================================================
+   .press — 押し込み（0.97 を下限とする）
+   ============================================================ */
+.press,
+.press-sm {
+  transition: transform var(--dur-instant) var(--ease-inout);
+}
+.press:active,
+.press.is-pressed { transform: scale(0.985); }
+.press-sm:active,
+.press-sm.is-pressed { transform: scale(0.97); }
+
+/* ============================================================
+   .collapse — 高さの開閉（max-height の固定値は使わない）
+   ============================================================ */
+.collapse {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--dur-base) var(--ease-inout);
+}
+.collapse[data-open='true'] {
+  grid-template-rows: 1fr;
+}
+.collapse > * {
+  min-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity var(--dur-fast) var(--ease-in);
+}
+.collapse[data-open='true'] > * {
+  opacity: 1;
+  transition: opacity var(--dur-base) var(--ease-out) 80ms;
+}
+
+/* ============================================================
+   .scrim / .panel — モーダル
+   backdrop blur は値を補間せず、固定 blur 層の opacity だけを動かす
+   ============================================================ */
+.scrim {
+  background-color: rgba(28, 25, 23, 0.6);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  opacity: 0;
+  transition: opacity var(--dur-base) var(--ease-out);
+}
+.scrim[data-state='open'] { opacity: 1; }
+.scrim[data-state='closing'] {
+  opacity: 0;
+  transition-duration: var(--dur-fast);
+  transition-timing-function: var(--ease-in);
+}
+
+.panel {
+  --panel-y: 8px;
+  opacity: 0;
+  transform: translate3d(0, var(--panel-y), 0) scale(0.985);
+  transform-origin: 50% 40%;
+  transition:
+    opacity var(--dur-base) var(--ease-out) 40ms,
+    transform var(--dur-base) var(--ease-out) 40ms;
+}
+.panel[data-state='open'] { opacity: 1; transform: none; }
+.panel[data-state='closing'] {
+  opacity: 0;
+  transform: translate3d(0, calc(var(--panel-y) * 0.5), 0) scale(0.99);
+  transition-duration: var(--dur-fast);
+  transition-delay: 0ms;
+  transition-timing-function: var(--ease-in);
+}
+.panel-from-top { --panel-y: -10px; transform-origin: 50% 0%; }
+
+/* ============================================================
+   .check-in — チェックアイコンが幅ごと開く（ラベルを飛ばさない）
+   ============================================================ */
+.check-in {
+  display: inline-grid;
+  place-items: center;
+  inline-size: 0;
+  margin-inline-end: 0;
+  opacity: 0;
+  transform: scale(0.8);
+  overflow: hidden;
+  transition:
+    inline-size var(--dur-fast) var(--ease-out),
+    margin-inline-end var(--dur-fast) var(--ease-out),
+    opacity var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+.check-in[data-on='true'] {
+  inline-size: 1rem;
+  margin-inline-end: 0.375rem;
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* ============================================================
+   .slot-transition — 既存クラスの修理
+   transform と opacity が抜けており hover と drag が瞬間切替だった
+   ============================================================ */
+.slot-transition {
+  transition:
+    background-color var(--dur-base) var(--ease-inout),
+    border-color var(--dur-base) var(--ease-inout),
+    color var(--dur-base) var(--ease-inout),
+    box-shadow var(--dur-fast) var(--ease-inout),
+    transform var(--dur-fast) var(--ease-out),
+    opacity var(--dur-fast) var(--ease-inout);
+}
+[data-dragging='true'] .slot-transition {
+  transition-duration: var(--dur-fast);
+}
+.slot-dragging { opacity: 0.45; transform: scale(0.98); }
+[data-dnd='true'] .slot-droppable {
+  outline: 1px dashed rgba(120, 113, 108, 0.4);
+  outline-offset: -3px;
+}
+
+/* ============================================================
+   スライダー
+   --range-progress にはトランジションを付けない（指に1:1で追従）
+   ============================================================ */
 input[type="range"] {
   accent-color: var(--accent);
   -webkit-appearance: none;
@@ -95,6 +345,18 @@ input[type="range"]::-webkit-slider-thumb {
   background: #ffffff;
   border: 1px solid #d6d3d1;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
+  transition: box-shadow var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) linear;
+}
+@media (hover: hover) and (pointer: fine) {
+  input[type="range"]:hover::-webkit-slider-thumb {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18), 0 0 0 6px rgba(234, 88, 12, 0.1);
+    border-color: var(--accent);
+  }
+}
+input[type="range"]:active::-webkit-slider-thumb {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18), 0 0 0 10px rgba(234, 88, 12, 0.16);
+  transition-duration: var(--dur-instant);
 }
 input[type="range"]::-moz-range-track {
   height: 6px;
@@ -113,9 +375,59 @@ input[type="range"]::-moz-range-thumb {
   background: #ffffff;
   border: 1px solid #d6d3d1;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
+  transition: box-shadow var(--dur-fast) var(--ease-out);
+}
+input[type="range"]:active::-moz-range-thumb {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18), 0 0 0 10px rgba(234, 88, 12, 0.16);
 }
 
-/* 印刷用A4 1枚最適化スタイル */
+/* ============================================================
+   動きを減らす設定
+   duration だけでなく delay も潰す。潰さないと「動かないのに
+   最大880ms遅れて突然出る」という最悪の挙動になる。
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after,
+  .slot-transition {
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+
+  :where(.rv-armed) .reveal,
+  .reveal,
+  .reveal.is-in {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+  }
+
+  .swap,
+  .ring-once,
+  .tint-once { animation: none !important; }
+
+  .tint[data-live='true'] { background-color: transparent !important; }
+
+  .panel,
+  .panel[data-state='closing'] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .scrim { opacity: 1 !important; }
+
+  .lift:hover { transform: none !important; }
+  .press:active,
+  .press-sm:active { transform: none !important; }
+}
+
+/* ============================================================
+   印刷（A4 1枚）
+   ============================================================ */
 @media print {
   @page {
     size: A4 portrait;
@@ -128,12 +440,20 @@ input[type="range"]::-moz-range-thumb {
     font-size: 12px !important;
   }
 
-  .no-print {
-    display: none !important;
-  }
+  .no-print { display: none !important; }
+  .print-only { display: block !important; }
 
-  .print-only {
-    display: block !important;
+  /* 登場途中・折りたたみ中でも、紙には必ず全部出す */
+  .reveal,
+  .reveal.is-in {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+  }
+  .collapse { grid-template-rows: 1fr !important; }
+  .collapse > * {
+    opacity: 1 !important;
+    overflow: visible !important;
   }
 
   .print-page {

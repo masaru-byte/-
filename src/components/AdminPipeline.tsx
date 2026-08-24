@@ -82,7 +82,7 @@ export const AdminPipeline: React.FC = () => {
   });
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 animate-fadeIn">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       {/* 管理ヘッダー */}
       <div className="bg-white p-6 sm:p-8 rounded-xl border border-stone-200 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
@@ -130,7 +130,7 @@ export const AdminPipeline: React.FC = () => {
             <span className="text-[11px] text-stone-500">Structured Output Engine</span>
           </div>
           {crawlLogs.map((log, idx) => (
-            <div key={idx} className="leading-relaxed animate-fadeIn">
+            <div key={idx} className="leading-relaxed">
               {log}
             </div>
           ))}
