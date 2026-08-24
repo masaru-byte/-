@@ -309,7 +309,7 @@ export const GovDashboard: React.FC = () => {
                 <React.Fragment key={period.key}>
                   <div className="min-w-0 p-2 text-xs font-bold bg-stone-50 rounded-lg text-stone-700 text-center flex flex-col justify-center">
                     <div>{period.label}</div>
-                    <div className="text-[9px] text-stone-400 font-normal">{period.timeRange}</div>
+                    <div className="text-[11px] text-stone-400 font-normal">{period.timeRange}</div>
                   </div>
 
                   {DAYS_OF_WEEK.map((day) => {
@@ -324,7 +324,7 @@ export const GovDashboard: React.FC = () => {
                         title={`${day.label} ${period.label}：対応できる事業所 ${count} 件`}
                       >
                         <span className="text-sm tabular-nums">{count}</span>
-                        <span className="text-[9px] opacity-80 font-normal">
+                        <span className="text-[11px] opacity-80 font-normal">
                           {count === 0 ? '事業所なし' : '事業所'}
                         </span>
                       </div>
@@ -399,7 +399,7 @@ export const GovDashboard: React.FC = () => {
                   <span className="text-stone-400">要因:</span> {item.reason}
                 </p>
 
-                <div className="text-[10px] text-stone-700 bg-stone-50 px-2 py-0.5 rounded-md inline-block">
+                <div className="text-[11px] text-stone-700 bg-stone-50 px-2 py-0.5 rounded-md inline-block">
                   推奨施策: 総合事業 訪問型サービスB・シルバー人材委託
                 </div>
               </div>
@@ -440,7 +440,7 @@ export const GovDashboard: React.FC = () => {
               <div className="flex items-center justify-between">
                 <span className="font-bold text-xs text-stone-900">{d.district}</span>
                 <span
-                  className={`text-[10px] font-bold px-1.5 py-0.5 rounded-md ${
+                  className={`text-[11px] font-bold px-1.5 py-0.5 rounded-md ${
                     d.level === 'high'
                       ? 'bg-rose-200 text-rose-900'
                       : d.level === 'mid'

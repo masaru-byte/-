@@ -185,7 +185,7 @@ const SlotDetailModalInner: React.FC<SlotDetailModalInnerProps> = ({
                         <div>
                           <div className="flex items-center space-x-2">
                             <span
-                              className={`text-[10px] font-bold px-2 py-0.5 rounded-md border ${schemeInfo.badgeColor}`}
+                              className={`text-[11px] font-bold px-2 py-0.5 rounded-md border ${schemeInfo.badgeColor}`}
                             >
                               {schemeInfo.label}
                             </span>
@@ -226,13 +226,13 @@ const SlotDetailModalInner: React.FC<SlotDetailModalInnerProps> = ({
                       {/* 費用 ＆ 家族時間削減効果 */}
                       <div className="mt-3 pt-2 border-t border-stone-200/60 grid grid-cols-2 gap-2 text-xs">
                         <div className="bg-white/80 p-2 rounded-xl border border-stone-100">
-                          <span className="text-[10px] text-stone-500 block">自己負担目安</span>
+                          <span className="text-[11px] text-stone-500 block">自己負担目安</span>
                           <span className="font-bold text-stone-900">
                             {srv.price === 0 ? '無料' : `約 ${srv.price.toLocaleString()} 円 / 回`}
                           </span>
                         </div>
                         <div className="bg-white/80 p-2 rounded-xl border border-stone-100">
-                          <span className="text-[10px] text-stone-500 block">家族時間の削減</span>
+                          <span className="text-[11px] text-stone-500 block">家族時間の削減</span>
                           <span className="font-bold text-emerald-700">
                             1回あたり {srv.reductionHours} 時間
                           </span>
@@ -240,7 +240,7 @@ const SlotDetailModalInner: React.FC<SlotDetailModalInnerProps> = ({
                       </div>
 
                       {/* 出典 ＆ 根拠情報（厳格な出所管理） */}
-                      <div className="mt-2.5 pt-2 border-t border-dashed border-stone-200 flex flex-wrap items-center justify-between text-[10px] text-stone-500 gap-2">
+                      <div className="mt-2.5 pt-2 border-t border-dashed border-stone-200 flex flex-wrap items-center justify-between text-[11px] text-stone-500 gap-2">
                         <div className="flex items-center space-x-2">
                           <ShieldCheck className="w-3.5 h-3.5 text-orange-600" />
                           <span>
@@ -264,7 +264,7 @@ const SlotDetailModalInner: React.FC<SlotDetailModalInnerProps> = ({
 
                       {/* 原文スニペット */}
                       {srv.priceSourceSnippet && (
-                        <div className="mt-1.5 p-1.5 rounded-lg bg-stone-100/70 text-[10px] text-stone-600 font-mono">
+                        <div className="mt-1.5 p-1.5 rounded-lg bg-stone-100/70 text-[11px] text-stone-600 font-mono">
                           抜粋: 「{srv.priceSourceSnippet}」
                         </div>
                       )}

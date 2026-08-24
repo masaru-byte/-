@@ -84,7 +84,7 @@ export const ServicePlanList: React.FC<ServicePlanListProps> = ({ slots, onSelec
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2 mb-1">
                     <span
-                      className={`text-[10px] font-bold px-1.5 py-0.5 rounded-md border shrink-0 ${scheme.badgeColor}`}
+                      className={`text-[11px] font-bold px-1.5 py-0.5 rounded-md border shrink-0 ${scheme.badgeColor}`}
                     >
                       {scheme.label}
                     </span>
@@ -99,13 +99,13 @@ export const ServicePlanList: React.FC<ServicePlanListProps> = ({ slots, onSelec
 
                 <div className="flex items-center gap-4 sm:gap-6 shrink-0">
                   <div className="text-right">
-                    <div className="text-[10px] text-stone-500">週の回数</div>
+                    <div className="text-[11px] text-stone-500">週の回数</div>
                     <div className="text-sm font-bold text-stone-900 tabular-nums">
                       {row.timesPerWeek} 回
                     </div>
                   </div>
                   <div className="text-right min-w-[76px]">
-                    <div className="text-[10px] text-stone-500">月あたり</div>
+                    <div className="text-[11px] text-stone-500">月あたり</div>
                     <div className="text-sm font-bold text-stone-900 tabular-nums">
                       {row.monthlyCost > 0 ? `¥${Math.round(row.monthlyCost).toLocaleString()}` : '無料'}
                     </div>

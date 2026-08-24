@@ -127,7 +127,7 @@ export const AdminPipeline: React.FC = () => {
               <Terminal className="w-4 h-4 text-amber-400" />
               <span className="font-bold text-stone-200">crawler/collect_services.py 実行ログ</span>
             </div>
-            <span className="text-[10px] text-stone-500">Structured Output Engine</span>
+            <span className="text-[11px] text-stone-500">Structured Output Engine</span>
           </div>
           {crawlLogs.map((log, idx) => (
             <div key={idx} className="leading-relaxed animate-fadeIn">
@@ -227,19 +227,19 @@ export const AdminPipeline: React.FC = () => {
                     {/* ステータス */}
                     <td className="p-3.5 whitespace-nowrap">
                       {srv.status === 'approved' && (
-                        <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
                           <CheckCircle className="w-3 h-3 mr-1" />
                           公開中
                         </span>
                       )}
                       {srv.status === 'draft' && (
-                        <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-bold bg-amber-100 text-amber-800 border border-amber-300">
                           <AlertTriangle className="w-3 h-3 mr-1" />
                           承認待ち
                         </span>
                       )}
                       {srv.status === 'rejected' && (
-                        <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold bg-rose-100 text-rose-800 border border-rose-300">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-bold bg-rose-100 text-rose-800 border border-rose-300">
                           <XCircle className="w-3 h-3 mr-1" />
                           却下
                         </span>
@@ -254,7 +254,7 @@ export const AdminPipeline: React.FC = () => {
 
                     {/* スキーム */}
                     <td className="p-3.5 whitespace-nowrap">
-                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md border ${schemeInfo.badgeColor}`}>
+                      <span className={`text-[11px] font-bold px-2 py-0.5 rounded-md border ${schemeInfo.badgeColor}`}>
                         {schemeInfo.label}
                       </span>
                     </td>
@@ -264,7 +264,7 @@ export const AdminPipeline: React.FC = () => {
                       <div className="font-bold text-stone-900">
                         {srv.price === 0 ? '無料' : `約 ${srv.price.toLocaleString()} 円`}
                       </div>
-                      <div className="text-[10px] text-stone-500 font-mono line-clamp-1 mt-0.5">
+                      <div className="text-[11px] text-stone-500 font-mono line-clamp-1 mt-0.5">
                         「{srv.priceSourceSnippet}」
                       </div>
                     </td>
@@ -277,7 +277,7 @@ export const AdminPipeline: React.FC = () => {
                     {/* 出典 ＆ 信頼度 */}
                     <td className="p-3.5">
                       <div className="flex items-center space-x-1">
-                        <span className="text-[10px] font-semibold text-stone-600">
+                        <span className="text-[11px] font-semibold text-stone-600">
                           {(srv.confidenceScore * 100).toFixed(0)}%
                         </span>
                         {srv.sourceUrl && (
@@ -291,7 +291,7 @@ export const AdminPipeline: React.FC = () => {
                           </a>
                         )}
                       </div>
-                      <div className="text-[9px] text-stone-400">{srv.sourceType}</div>
+                      <div className="text-[11px] text-stone-400">{srv.sourceType}</div>
                     </td>
 
                     {/* 操作ボタン */}
@@ -300,14 +300,14 @@ export const AdminPipeline: React.FC = () => {
                         <button
                           type="button"
                           onClick={() => handleUpdateStatus(srv.id, 'approved')}
-                          className="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-bold shadow-xs transition-all"
+                          className="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold shadow-xs transition-all"
                         >
                           承認・公開
                         </button>
                         <button
                           type="button"
                           onClick={() => handleUpdateStatus(srv.id, 'rejected')}
-                          className="px-2 py-1 rounded-lg bg-stone-200 hover:bg-rose-100 hover:text-rose-700 text-stone-700 text-[10px] font-medium transition-all"
+                          className="px-2 py-1 rounded-lg bg-stone-200 hover:bg-rose-100 hover:text-rose-700 text-stone-700 text-[11px] font-medium transition-all"
                         >
                           却下
                         </button>

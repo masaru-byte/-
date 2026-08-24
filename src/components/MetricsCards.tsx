@@ -34,13 +34,13 @@ export const MetricsCards: React.FC<MetricsCardsProps> = ({ metrics, initialFami
     <div className="space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* 指標1: 家族が支えている時間 */}
-        <div className="relative overflow-hidden bg-white p-5 rounded-lg border border-stone-200">
+        <div className="bg-white p-5 rounded-xl border border-stone-200">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center space-x-2 text-rose-800">
               <div className="p-2 rounded-lg bg-rose-50">
                 <Clock className="w-5 h-5 text-rose-700" />
               </div>
-              <span className="text-xs font-bold tracking-wide">家族が支えている時間</span>
+              <span className="text-[13px] font-semibold">家族が支えている時間</span>
             </div>
             {savedWeeklyHours > 0 && (
               <span className="flex items-center space-x-1 text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 shrink-0">
@@ -70,20 +70,18 @@ export const MetricsCards: React.FC<MetricsCardsProps> = ({ metrics, initialFami
               <>登録した困りごとは、すべてサービスでまかなえる計算です。</>
             )}
           </p>
-
-          <div className="absolute bottom-0 left-0 right-0 h-1 bg-rose-500" />
         </div>
 
         {/* 指標2: 自己負担額 */}
-        <div className="relative overflow-hidden bg-white p-5 rounded-lg border border-stone-200">
+        <div className="bg-white p-5 rounded-xl border border-stone-200">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center space-x-2 text-amber-800">
               <div className="p-2 rounded-lg bg-amber-50">
                 <PiggyBank className="w-5 h-5 text-amber-700" />
               </div>
-              <span className="text-xs font-bold tracking-wide">毎月かかるお金</span>
+              <span className="text-[13px] font-semibold">毎月かかるお金</span>
             </div>
-            <span className="text-[10px] text-stone-500 bg-stone-100 px-2 py-0.5 rounded-md shrink-0">
+            <span className="text-[11px] text-stone-500 bg-stone-100 px-2 py-0.5 rounded-md shrink-0">
               保険1割＋自費
             </span>
           </div>
@@ -98,18 +96,16 @@ export const MetricsCards: React.FC<MetricsCardsProps> = ({ metrics, initialFami
           <p className="mt-2 text-xs text-stone-500 leading-relaxed">
             介護保険の自己負担分と、保険外サービス（自費・シルバー人材・互助）の合計目安です。
           </p>
-
-          <div className="absolute bottom-0 left-0 right-0 h-1 bg-amber-500" />
         </div>
 
         {/* 指標3: サービスにまかせられた困りごと */}
-        <div className="relative overflow-hidden bg-white p-5 rounded-lg border border-stone-200">
+        <div className="bg-white p-5 rounded-xl border border-stone-200">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center space-x-2 text-orange-800">
               <div className="p-2 rounded-lg bg-orange-50">
                 <CheckCircle2 className="w-5 h-5 text-orange-700" />
               </div>
-              <span className="text-xs font-bold tracking-wide">サービスにまかせられた数</span>
+              <span className="text-[13px] font-semibold">サービスにまかせられた数</span>
             </div>
             <span className="text-[11px] font-bold text-orange-700 bg-orange-50 px-2 py-0.5 rounded-full border border-orange-200 shrink-0 tabular-nums">
               {metrics.coverageRate}%
@@ -117,7 +113,7 @@ export const MetricsCards: React.FC<MetricsCardsProps> = ({ metrics, initialFami
           </div>
 
           <div className="mt-3 flex items-baseline space-x-1.5">
-            <span className="text-4xl font-bold tracking-tight text-orange-900 tabular-nums">
+            <span className="text-4xl font-bold tracking-tight text-stone-900 tabular-nums">
               {displayCovered}
             </span>
             <span className="text-lg font-semibold text-stone-400 tabular-nums">
@@ -143,8 +139,6 @@ export const MetricsCards: React.FC<MetricsCardsProps> = ({ metrics, initialFami
               <>すべてサービスでまかなえています。</>
             )}
           </p>
-
-          <div className="absolute bottom-0 left-0 right-0 h-1 bg-orange-500" />
         </div>
       </div>
 

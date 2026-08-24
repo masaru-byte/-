@@ -285,12 +285,23 @@ export const InputWizard: React.FC<InputWizardProps> = ({
           </button>
         </div>
 
-        {/* プログレスバー */}
-        <div className="w-full bg-stone-100 h-1 rounded-full mt-4 overflow-hidden">
-          <div
-            className="bg-orange-600 h-full transition-all duration-300"
-            style={{ width: `${(currentStep / 5) * 100}%` }}
-          />
+        {/* ステップ進捗（5分割セグメント） */}
+        <div
+          className="flex gap-1.5 mt-4"
+          role="progressbar"
+          aria-valuemin={1}
+          aria-valuemax={5}
+          aria-valuenow={currentStep}
+          aria-label={`ステップ ${currentStep} / 5`}
+        >
+          {[1, 2, 3, 4, 5].map((step) => (
+            <div
+              key={step}
+              className={`h-1.5 flex-1 rounded-full transition-colors duration-300 ${
+                step <= currentStep ? 'bg-orange-600' : 'bg-stone-200'
+              }`}
+            />
+          ))}
         </div>
       </div>
 
@@ -579,7 +590,7 @@ export const InputWizard: React.FC<InputWizardProps> = ({
                                 }`}
                               >
                                 {tp.label}
-                                <span className="ml-1 font-normal text-[10px] opacity-70">
+                                <span className="ml-1 font-normal text-[11px] opacity-70">
                                   {tp.timeRange}
                                 </span>
                               </button>
@@ -633,7 +644,8 @@ export const InputWizard: React.FC<InputWizardProps> = ({
                 aria-label="月額予算"
                 value={formData.monthlyBudget}
                 onChange={(e) => handleBudgetChange(Number(e.target.value))}
-                className="w-full h-2 bg-stone-200 rounded-lg cursor-pointer accent-orange-600"
+                style={{ '--range-progress': `${(formData.monthlyBudget / 200000) * 100}%` } as React.CSSProperties}
+                className="w-full h-6 cursor-pointer"
               />
 
               <div className="flex justify-between text-[11px] text-stone-400 font-medium tabular-nums">

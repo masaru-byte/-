@@ -2,10 +2,13 @@
 
 @layer base {
   :root {
-    --background: #f8fafc;
-    --foreground: #0f172a;
-    
-    /* けあしる特有のテーマカラー */
+    /* ---- セマンティックトークン（HIG: 色は意味で定義する） ---- */
+    --background: #fafaf9;        /* stone-50: ページ地 */
+    --foreground: #1c1917;        /* stone-900: 本文 */
+    --accent: #ea580c;            /* orange-600: 操作できるもの専用 */
+    --accent-hover: #c2410c;      /* orange-700 */
+
+    /* スロット状態カラー（担い手の色分け） */
     --color-family-bg: #FCEBEB;
     --color-family-text: #791F1F;
     --color-family-border: #F7C5C5;
@@ -14,27 +17,102 @@
     --color-insurance-text: #085041;
     --color-insurance-border: #B5EAD7;
 
-    --color-paid-bg: #FAECE7;
-    --color-paid-text: #712B13;
-    --color-paid-border: #F3D0C4;
+    --color-paid-bg: #FFF1E3;
+    --color-paid-text: #9A3412;
+    --color-paid-border: #FBD3AE;
+  }
+
+  html {
+    /* 日本語の詰め組みと数字の等幅を全体既定に */
+    font-feature-settings: "palt" 1;
   }
 
   body {
     background-color: var(--background);
     color: var(--foreground);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic Medium", "Meiryo", sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans",
+      "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic Medium", Meiryo,
+      sans-serif;
     -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* キーボード操作時のフォーカスを全要素で可視化（HIG: アクセシビリティ） */
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+
+  ::selection {
+    background: #ffedd5; /* orange-100 */
+    color: #7c2d12;
   }
 }
 
-/* スロット切り替えトランジション（仕様: 0.35秒の気持ち良いアニメーション） */
+/* スロット切り替えトランジション（0.35秒） */
 .slot-transition {
-  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: background-color 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.15s ease;
 }
 
-/* スライダー用カスタムスタイル */
+@media (prefers-reduced-motion: reduce) {
+  .slot-transition,
+  * {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+
+/* ---- スライダー（ブランドアクセントで統一） ---- */
 input[type="range"] {
-  accent-color: #0f766e;
+  accent-color: var(--accent);
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 9999px;
+  background: linear-gradient(
+    to right,
+    var(--accent) 0%,
+    var(--accent) var(--range-progress, 0%),
+    #e7e5e4 var(--range-progress, 0%),
+    #e7e5e4 100%
+  );
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  margin-top: -8px;
+  border-radius: 9999px;
+  background: #ffffff;
+  border: 1px solid #d6d3d1;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
+}
+input[type="range"]::-moz-range-track {
+  height: 6px;
+  border-radius: 9999px;
+  background: #e7e5e4;
+}
+input[type="range"]::-moz-range-progress {
+  height: 6px;
+  border-radius: 9999px;
+  background: var(--accent);
+}
+input[type="range"]::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 9999px;
+  background: #ffffff;
+  border: 1px solid #d6d3d1;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
 }
 
 /* 印刷用A4 1枚最適化スタイル */
@@ -64,6 +142,8 @@ input[type="range"] {
     padding: 0 !important;
     max-width: 100% !important;
     width: 100% !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
 
   .print-grid {

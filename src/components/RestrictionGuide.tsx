@@ -70,7 +70,7 @@ export const RestrictionGuide: React.FC<RestrictionGuideProps> = ({
               <div className="flex items-start justify-between gap-2">
                 <div className="font-bold text-xs text-stone-900">{rule.title}</div>
                 <span
-                  className={`text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0 ${
+                  className={`text-[11px] font-bold px-2 py-0.5 rounded-full shrink-0 ${
                     rule.isCovered === 'covered'
                       ? 'bg-emerald-100 text-emerald-800'
                       : rule.isCovered === 'conditional'
@@ -92,7 +92,7 @@ export const RestrictionGuide: React.FC<RestrictionGuideProps> = ({
                 💡 {rule.explanation}
               </div>
 
-              <div className="text-[9px] text-stone-400 font-mono">
+              <div className="text-[11px] text-stone-400 font-mono">
                 根拠: {rule.officialSource}
               </div>
             </div>

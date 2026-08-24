@@ -292,7 +292,8 @@ export default function HomePage() {
                           step="5000"
                           value={monthlyBudget}
                           onChange={(e) => handleBudgetChange(Number(e.target.value))}
-                          className="w-full h-2 bg-stone-200 rounded-lg cursor-pointer accent-orange-600"
+                          style={{ '--range-progress': `${(monthlyBudget / 200000) * 100}%` } as React.CSSProperties}
+                          className="w-full h-6 cursor-pointer"
                         />
                         <div className="flex justify-between text-[11px] text-stone-400 tabular-nums mt-1">
                           <span>0円</span>
@@ -369,7 +370,7 @@ export default function HomePage() {
           実際のケアプラン作成や利用にあたっては、必ず担当ケアマネジャー、地域包括支援センター、または各提供事業者にご相談ください。
           掲載されているサービス情報は、広告費や掲載料による順位優遇を行わない公平な基準でAI構造化および人手承認を行っています。
         </p>
-        <div className="pt-2 text-[10px] text-stone-400">
+        <div className="pt-2 text-[11px] text-stone-400">
           © 2026 けあしる - 介護の「見えない時間」可視化 × 保険外サービス横断検索
         </div>
       </footer>

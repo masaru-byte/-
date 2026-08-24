@@ -32,7 +32,8 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, onSelectTab, onReset 
           <button
             type="button"
             onClick={onReset}
-            className="flex items-center space-x-2.5 text-left rounded-lg focus-visible:outline-2 focus-visible:outline-orange-600 focus-visible:outline-offset-2"
+            aria-label="条件を変更する（最初からやり直す）"
+            className="flex items-center space-x-2.5 text-left rounded-lg"
           >
             <span className="w-9 h-9 rounded-lg bg-orange-600 flex items-center justify-center text-white shrink-0">
               <Clock className="w-5 h-5" />
@@ -58,7 +59,7 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, onSelectTab, onReset 
                   type="button"
                   onClick={() => onSelectTab(tab.key)}
                   aria-current={isActive ? 'page' : undefined}
-                  className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm transition-colors ${
+                  className={`flex items-center gap-1.5 h-10 px-3.5 rounded-lg text-sm transition-colors ${
                     isActive
                       ? 'bg-orange-50 text-orange-800 font-bold'
                       : 'text-stone-600 hover:bg-stone-100 hover:text-stone-900 font-medium'

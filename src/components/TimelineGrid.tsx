@@ -111,10 +111,10 @@ export const TimelineGrid: React.FC<TimelineGridProps> = ({ slots, onSlotClick }
                   <Clock className="w-3.5 h-3.5 text-stone-500 shrink-0" />
                   <span className="truncate">{period.label}</span>
                 </div>
-                <div className="text-[10px] text-stone-500 mt-0.5 tabular-nums">
+                <div className="text-[11px] text-stone-500 mt-0.5 tabular-nums">
                   {period.timeRange}
                 </div>
-                <div className="text-[9px] text-stone-400 mt-1">
+                <div className="text-[11px] text-stone-400 mt-1">
                   基準 {period.nominalHours}h
                 </div>
               </div>
@@ -132,17 +132,28 @@ export const TimelineGrid: React.FC<TimelineGridProps> = ({ slots, onSlotClick }
                 return (
                   <div
                     key={slotId}
+                    role="button"
+                    tabIndex={0}
+                    aria-label={`${day.label} ${period.label}${
+                      needTag ? `：${needTag.name}` : '：空き枠'
+                    }${slot.assignedService ? `（${slot.assignedService.name}）` : ''}`}
                     draggable={!!slot.needsTagId}
                     onDragStart={(e) => handleDragStart(e, slotId)}
                     onDragOver={handleDragOver}
                     onDrop={(e) => handleDrop(e, slotId)}
                     onClick={() => onSlotClick(slot)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        onSlotClick(slot);
+                      }
+                    }}
                     title={
                       slot.assignedService
                         ? `${needTag?.name ?? ''}／${slot.assignedService.name}（${slot.assignedService.providerName}）`
                         : needTag?.name
                     }
-                    className={`min-w-0 overflow-hidden min-h-[112px] p-2.5 rounded-lg border-2 cursor-pointer slot-transition flex flex-col justify-between select-none ${colorConfig.cardClass} ${
+                    className={`min-w-0 overflow-hidden min-h-[112px] p-2.5 rounded-lg border cursor-pointer slot-transition flex flex-col justify-between select-none hover:shadow-md hover:-translate-y-px ${colorConfig.cardClass} ${
                       isDragging ? 'opacity-50' : ''
                     }`}
                   >
@@ -150,7 +161,7 @@ export const TimelineGrid: React.FC<TimelineGridProps> = ({ slots, onSlotClick }
                     <div className="min-w-0">
                       <div className="flex items-center justify-between gap-1 mb-1.5">
                         <span
-                          className={`text-[10px] font-bold px-1.5 py-0.5 rounded-md border shrink-0 ${colorConfig.badgeClass}`}
+                          className={`text-[11px] font-bold px-1.5 py-0.5 rounded-md border shrink-0 ${colorConfig.badgeClass}`}
                         >
                           {slot.state === 'family' && '家族'}
                           {slot.state === 'insurance' && '保険内'}
@@ -159,7 +170,7 @@ export const TimelineGrid: React.FC<TimelineGridProps> = ({ slots, onSlotClick }
                         </span>
 
                         {slot.needsTagId && (
-                          <span className="text-[10px] font-semibold opacity-70 shrink-0 tabular-nums">
+                          <span className="text-[11px] font-semibold opacity-70 shrink-0 tabular-nums">
                             {slot.effectiveHours}h
                           </span>
                         )}
@@ -168,7 +179,7 @@ export const TimelineGrid: React.FC<TimelineGridProps> = ({ slots, onSlotClick }
                       {slot.assignedService ? (
                         <>
                           {needTag && (
-                            <div className="text-[10px] opacity-60 truncate leading-tight">
+                            <div className="text-[11px] opacity-60 truncate leading-tight">
                               {needTag.name}
                             </div>
                           )}
@@ -186,7 +197,7 @@ export const TimelineGrid: React.FC<TimelineGridProps> = ({ slots, onSlotClick }
                     </div>
 
                     {/* 下部: 提供者 ＆ 費用 */}
-                    <div className="mt-2 pt-1 border-t border-black/5 flex items-center justify-between gap-1 text-[10px] min-w-0">
+                    <div className="mt-2 pt-1 border-t border-black/5 flex items-center justify-between gap-1 text-[11px] min-w-0">
                       <div className="flex items-center gap-1 min-w-0">
                         <User className="w-2.5 h-2.5 shrink-0 opacity-60" />
                         <span className="truncate opacity-75">
