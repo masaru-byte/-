@@ -16,7 +16,7 @@ import React, { useState } from 'react';
 import { DAYS_OF_WEEK, NEEDS_TAGS, TIME_PERIODS } from '@/constants/careConstants';
 import { SlotId, TimelineSlot } from '@/types';
 import { SLOT_COLORS } from '@/utils/colors';
-import { Clock, User } from 'lucide-react';
+import { Clock } from 'lucide-react';
 
 interface TimelineGridProps {
   slots: TimelineSlot[];
@@ -153,61 +153,32 @@ export const TimelineGrid: React.FC<TimelineGridProps> = ({ slots, onSlotClick }
                         ? `${needTag?.name ?? ''}／${slot.assignedService.name}（${slot.assignedService.providerName}）`
                         : needTag?.name
                     }
-                    className={`min-w-0 overflow-hidden min-h-[112px] p-2.5 rounded-lg border cursor-pointer slot-transition flex flex-col justify-between select-none hover:shadow-md hover:-translate-y-px ${colorConfig.cardClass} ${
+                    className={`min-w-0 overflow-hidden min-h-[88px] p-2.5 rounded-lg border cursor-pointer slot-transition flex flex-col justify-between select-none hover:shadow-md hover:-translate-y-px ${colorConfig.cardClass} ${
                       isDragging ? 'opacity-50' : ''
                     }`}
                   >
-                    {/* 上部：困りごとは小さく、提供されるサービス名を主役にする */}
+                    {/* 主タイトル：サービス名（なければ困りごと名）だけを見せる */}
                     <div className="min-w-0">
-                      <div className="flex items-center justify-between gap-1 mb-1.5">
-                        <span
-                          className={`text-[11px] font-bold px-1.5 py-0.5 rounded-md border shrink-0 ${colorConfig.badgeClass}`}
-                        >
-                          {slot.state === 'family' && '家族'}
-                          {slot.state === 'insurance' && '保険内'}
-                          {slot.state === 'paid' && '保険外'}
-                          {slot.state === 'none' && 'なし'}
-                        </span>
-
-                        {slot.needsTagId && (
-                          <span className="text-[11px] font-semibold opacity-70 shrink-0 tabular-nums">
-                            {slot.effectiveHours}h
-                          </span>
-                        )}
-                      </div>
-
                       {slot.assignedService ? (
-                        <>
-                          {needTag && (
-                            <div className="text-[11px] opacity-60 truncate leading-tight">
-                              {needTag.name}
-                            </div>
-                          )}
-                          <div className="font-bold text-xs leading-snug line-clamp-3 break-all">
-                            {slot.assignedService.name}
-                          </div>
-                        </>
+                        <div className="font-bold text-xs leading-snug line-clamp-3 break-all">
+                          {slot.assignedService.name}
+                        </div>
                       ) : needTag ? (
                         <div className="font-bold text-xs leading-snug line-clamp-3 break-all">
                           {needTag.name}
                         </div>
                       ) : (
-                        <div className="text-[11px] text-stone-400 italic pt-1">空き枠</div>
+                        <div className="text-[11px] text-stone-400 pt-0.5">空き</div>
                       )}
                     </div>
 
-                    {/* 下部: 提供者 ＆ 費用 */}
-                    <div className="mt-2 pt-1 border-t border-black/5 flex items-center justify-between gap-1 text-[11px] min-w-0">
-                      <div className="flex items-center gap-1 min-w-0">
-                        <User className="w-2.5 h-2.5 shrink-0 opacity-60" />
-                        <span className="truncate opacity-75">
-                          {slot.assignedPerson ||
-                            (slot.state === 'family'
-                              ? '家族が担当'
-                              : slot.assignedService?.providerName || '担当')}
-                        </span>
-                      </div>
-
+                    {/* 下段：担い手（色に頼らない補助表記）と価格のみ */}
+                    <div className="mt-1.5 flex items-center justify-between gap-1 text-[11px] min-w-0">
+                      <span className="truncate opacity-70">
+                        {slot.state === 'family' && '家族が担当'}
+                        {slot.state === 'insurance' && '保険内'}
+                        {slot.state === 'paid' && '保険外'}
+                      </span>
                       {slot.cost > 0 && (
                         <span className="font-bold opacity-90 shrink-0 tabular-nums">
                           ¥{Math.round(slot.cost).toLocaleString()}
