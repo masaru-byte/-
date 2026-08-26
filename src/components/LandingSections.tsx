@@ -329,13 +329,15 @@ export const LandingSections: React.FC<LandingSectionsProps> = ({ onStart }) => 
               // 列構成はステージによらず固定。移動した瞬間に枠の形が変わらないようにする
               gridTemplateColumns: 'minmax(0,1fr) 56px minmax(0,1fr)',
               gap: 20,
-              // center だと下に要素が増えたとき週表が上へズレるので、上端で揃える
-              alignItems: 'start',
+              // 上下中央。リンク行は高さをアニメーションさせるので、
+              // 中央位置も一気に飛ばず滑らかに移動する
+              alignItems: 'center',
               minHeight: 432,
             }}
           >
             {/* ---------- 左：週表 ---------- */}
-            <div style={{ paddingTop: 8 }}>
+            {/* 凡例とリンク行は絶対配置にして、週表の中央位置を動かさない */}
+            <div style={{ position: 'relative' }}>
               <div
                 style={{
                   border: `2px solid ${arrived ? '#ED6A2C' : '#4A3E37'}`,
@@ -367,6 +369,7 @@ export const LandingSections: React.FC<LandingSectionsProps> = ({ onStart }) => 
                 </div>
               </div>
 
+              <div style={{ position: 'absolute', top: '100%', left: 0, right: 0 }}>
               <div style={{ marginTop: 18, display: 'flex', gap: 16, flexWrap: 'wrap' }}>
                 {(['family', 'insurance', 'paid'] as const).map((k) => (
                   <span key={k} style={{ display: 'inline-flex', alignItems: 'center', gap: 7, fontSize: 12, fontWeight: 700, color: '#BFB4AA' }}>
@@ -419,10 +422,11 @@ export const LandingSections: React.FC<LandingSectionsProps> = ({ onStart }) => 
                   </div>
                 </div>
               </div>
+              </div>
             </div>
 
             {/* ---------- 中央：コネクタ（ステージ2のみ） ---------- */}
-            <div aria-hidden="true" style={{ position: 'relative', height: 40, marginTop: 96, display: 'flex', alignItems: 'center', opacity: stage === 2 ? 1 : 0, transition: 'opacity .5s ease' }}>
+            <div aria-hidden="true" style={{ position: 'relative', height: 40, display: 'flex', alignItems: 'center', opacity: stage === 2 ? 1 : 0, transition: 'opacity .5s ease' }}>
               {stage === 2 && (
                 <>
                   <span style={{ flex: 1, borderTop: '2px dashed #ED6A2C' }} />
@@ -444,7 +448,7 @@ export const LandingSections: React.FC<LandingSectionsProps> = ({ onStart }) => 
             </div>
 
             {/* ---------- 右：ステージ別 ---------- */}
-            <div style={{ position: 'relative', minHeight: 340, paddingTop: 8 }}>
+            <div style={{ position: 'relative', minHeight: 340 }}>
               {/* ===== ステージ0：上から順にタイプされて埋まる ===== */}
               <div
                 style={{
