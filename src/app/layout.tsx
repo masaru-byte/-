@@ -20,7 +20,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#FFF7F2",
+  themeColor: "#FFF8F3",
 };
 
 export default function RootLayout({
@@ -30,7 +30,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ja" className="h-full antialiased" suppressHydrationWarning>
-      <head />
+      <head>
+        {/* 見出し=Zen Maru Gothic / 本文=Zen Kaku Gothic New（デザイン仕様） */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@700;900&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap"
+          rel="stylesheet"
+        />
+      </head>
       {/* オレンジのブランド体験を保つため、公開画面はライトテーマに統一 */}
       <body className="min-h-full flex flex-col">
         {children}

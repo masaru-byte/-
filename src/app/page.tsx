@@ -24,6 +24,8 @@ import {
 import { ALL_SERVICES } from '@/data/servicesSeed';
 import { ActiveTab, Header } from '@/components/Header';
 import { InputWizard } from '@/components/InputWizard';
+import { ScrollHero } from '@/components/ScrollHero';
+import { LandingSections } from '@/components/LandingSections';
 import { MetricsCards } from '@/components/MetricsCards';
 import { TimelineGrid } from '@/components/TimelineGrid';
 import { SlotDetailModal } from '@/components/SlotDetailModal';
@@ -239,8 +241,19 @@ export default function HomePage() {
       />
 
       {/* メインコンテンツ */}
-      <main className="flex-1 pb-16 no-print">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 space-y-6">
+      <main className="flex-1 no-print">
+        {/* ランディングは全画面幅が必要なので、max-w コンテナの外に置く */}
+        {activeTab === 'timeline' && !isWizardOpen && !hasStarted && (
+          <>
+            <ScrollHero
+              onStart={() => setIsWizardOpen(true)}
+              onLoadDemo={handleLoadDemo}
+            />
+            <LandingSections onStart={() => setIsWizardOpen(true)} />
+          </>
+        )}
+
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-16 space-y-6">
           {/* タブ1: タイムライン画面 */}
           {activeTab === 'timeline' && (
             <div className="space-y-5">
@@ -250,114 +263,8 @@ export default function HomePage() {
                   onSubmit={handleWizardSubmit}
                   onLoadDemo={handleLoadDemo}
                 />
-              ) : !hasStarted ? (
-                /* ---------------- ランディング（初回訪問） ---------------- */
-                <section
-                  {...landing.containerProps}
-                  className={`max-w-5xl mx-auto pt-10 sm:pt-16 pb-12 ${landing.containerProps.className ?? ''}`}
-                >
-                  <div className="grid lg:grid-cols-[1.15fr_0.85fr] items-center gap-10 lg:gap-14">
-                    <div className="text-center lg:text-left">
-                      <span
-                        {...landing.item(0)}
-                        className={`inline-flex items-center rounded-full border-2 border-stone-900 bg-white px-4 py-2 text-sm font-bold text-orange-800 shadow-[0_3px_0_#251B17] ${landing.item(0).className}`}
-                        style={{ ...landing.item(0).style, ['--rv-y' as string]: '12px', ['--rv-delay' as string]: '80ms' }}
-                      >
-                        家族のケア時間を、見えるかたちに
-                      </span>
-
-                      <h1 className="mt-7 text-4xl sm:text-5xl lg:text-[56px] font-extrabold tracking-[-0.04em] text-stone-900 leading-[1.28] text-balance">
-                        <span
-                          {...landing.item(1)}
-                          className={`block ${landing.item(1).className}`}
-                          style={{ ...landing.item(1).style, ['--rv-y' as string]: '16px', ['--rv-delay' as string]: '110ms' }}
-                        >
-                          介護に使っている時間、
-                        </span>
-                        <span
-                          {...landing.item(2)}
-                          className={`block text-orange-700 ${landing.item(2).className}`}
-                          style={{ ...landing.item(2).style, ['--rv-y' as string]: '16px', ['--rv-delay' as string]: '150ms' }}
-                        >
-                          いっしょに整理しませんか？
-                        </span>
-                      </h1>
-
-                      <p
-                        {...landing.item(4)}
-                        className={`mt-6 text-base sm:text-lg text-stone-600 leading-[1.9] text-balance ${landing.item(4).className}`}
-                        style={{ ...landing.item(4).style, ['--rv-y' as string]: '10px', ['--rv-delay' as string]: '190ms' }}
-                      >
-                        5つの質問に答えるだけで、1週間のケア時間と、地域で頼れるサービスを整理します。
-                        ご家族やケアマネジャーとの相談にもそのまま使えます。
-                      </p>
-
-                      <div
-                        {...landing.item(6)}
-                        className={`mt-8 flex flex-col sm:flex-row items-center lg:justify-start gap-4 ${landing.item(6).className}`}
-                        style={{ ...landing.item(6).style, ['--rv-y' as string]: '10px', ['--rv-delay' as string]: '230ms' }}
-                      >
-                        <button
-                          type="button"
-                          onClick={() => setIsWizardOpen(true)}
-                          className="press w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 h-14 rounded-2xl border-2 border-stone-900 bg-orange-600 hover:bg-orange-700 text-white font-extrabold text-base shadow-[0_5px_0_#251B17] active:translate-y-[3px] active:shadow-[0_2px_0_#251B17] transition-[background-color,transform,box-shadow]"
-                        >
-                          1分で見える化する
-                          <ArrowRight className="w-5 h-5" strokeWidth={2.5} />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={handleLoadDemo}
-                          className="press w-full sm:w-auto px-7 h-14 rounded-2xl border-2 border-stone-900 bg-white hover:bg-orange-50 text-stone-800 font-bold text-base transition-colors"
-                        >
-                          入力例を見てみる
-                        </button>
-                      </div>
-                    </div>
-
-                    <div
-                      {...landing.item(3)}
-                      className={`relative mx-auto w-full max-w-[360px] aspect-square ${landing.item(3).className}`}
-                      style={{ ...landing.item(3).style, ['--rv-y' as string]: '12px', ['--rv-delay' as string]: '170ms' }}
-                      aria-hidden="true"
-                    >
-                      <div className="absolute inset-4 rounded-[42px] border-[3px] border-stone-900 bg-orange-600 rotate-3 shadow-[8px_8px_0_#251B17]" />
-                      <div className="absolute inset-10 rounded-[34px] border-[3px] border-stone-900 bg-white -rotate-3 flex flex-col items-center justify-center text-center px-8">
-                        <span className="w-24 h-24 rounded-full bg-orange-100 border-[3px] border-stone-900 flex items-center justify-center text-orange-700">
-                          <Clock3 className="w-12 h-12" strokeWidth={2.4} />
-                        </span>
-                        <span className="mt-6 text-2xl font-extrabold text-stone-900">あなたの時間を</span>
-                        <span className="mt-1 text-xl font-extrabold text-orange-700">取り戻すお手伝い</span>
-                      </div>
-                      <span className="absolute top-0 right-3 w-12 h-12 rounded-full border-[3px] border-stone-900 bg-orange-100" />
-                      <span className="absolute bottom-3 left-0 w-8 h-8 rounded-full border-[3px] border-stone-900 bg-white" />
-                    </div>
-                  </div>
-
-                  <ol className="mt-16 grid grid-cols-1 sm:grid-cols-3 gap-4 text-left">
-                    {[
-                      { n: '1', t: '状況を入力', d: '要介護度・世帯・困りごとを選ぶだけ。約1分で終わります。' },
-                      { n: '2', t: 'タイムラインが完成', d: '1週間28マスで「誰がいつ支えているか」が見えます。' },
-                      { n: '3', t: 'サービスと料金を確認', d: '予算内で任せられるサービスと月額がその場でわかります。' },
-                    ].map((step) => (
-                      <li
-                        key={step.n}
-                        {...landing.item(5 + Number(step.n))}
-                        className={`flex gap-4 rounded-3xl border-2 border-stone-900 bg-white p-5 shadow-[0_4px_0_rgba(37,27,23,0.16)] ${landing.item(5 + Number(step.n)).className}`}
-                        style={{ ...landing.item(5 + Number(step.n)).style, ['--rv-y' as string]: '10px', ['--rv-delay' as string]: '250ms', ['--rv-step' as string]: '70ms' }}
-                      >
-                        <span className="w-10 h-10 rounded-full border-2 border-stone-900 bg-orange-100 text-orange-800 font-extrabold text-sm flex items-center justify-center shrink-0">
-                          {step.n}
-                        </span>
-                        <div>
-                          <div className="font-extrabold text-base text-stone-900">{step.t}</div>
-                          <p className="mt-1.5 text-sm text-stone-600 leading-relaxed">{step.d}</p>
-                        </div>
-                      </li>
-                    ))}
-                  </ol>
-                </section>
-              ) : (
+              ) : !hasStarted ? null : (
+              
                 <>
                   <section className="rounded-[28px] border-2 border-stone-900 bg-orange-600 px-6 sm:px-8 py-6 text-white shadow-[0_5px_0_#251B17]">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">

@@ -78,6 +78,9 @@
 
 @layer base {
   :root {
+    /* 見出し用（Zen Maru Gothic）と本文用を分ける */
+    --font-display: "Zen Maru Gothic", "Hiragino Maru Gothic ProN",
+      "Hiragino Kaku Gothic ProN", sans-serif;
     /* ---- セマンティックカラー ---- */
     --background: #FFF7F2;
     --foreground: #2D231E;
@@ -141,8 +144,8 @@ html {
   body {
     background-color: var(--background);
     color: var(--foreground);
-    font-family: "Hiragino Maru Gothic ProN", "Hiragino Sans",
-      "Noto Sans JP", "Yu Gothic Medium", Meiryo, sans-serif;
+    font-family: "Zen Kaku Gothic New", "Hiragino Kaku Gothic ProN",
+      "Hiragino Sans", "Noto Sans JP", Meiryo, sans-serif;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
@@ -226,6 +229,34 @@ body,
 .glass-solid {
   transition: background-color var(--dur-base) var(--ease-inout),
     color var(--dur-base) var(--ease-inout);
+}
+
+/* 見出しは丸ゴシック（デザイン仕様） */
+h1, h2, .font-display {
+  font-family: var(--font-display);
+}
+
+/* ============================================================
+   スクロールヒーロー用のキーフレーム
+   ============================================================ */
+@keyframes bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(7px); }
+}
+@keyframes zap {
+  0% { transform: translateX(0); opacity: 0; }
+  14% { opacity: 1; }
+  78% { opacity: 1; }
+  100% { transform: translateX(76px); opacity: 0; }
+}
+@keyframes caretBlink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+@keyframes driftXY {
+  0% { transform: translate(0, 0); }
+  50% { transform: translate(6px, -10px); }
+  100% { transform: translate(-5px, 8px); }
 }
 
 /* ============================================================
