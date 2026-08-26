@@ -277,19 +277,33 @@ export const TimelineGrid: React.FC<TimelineGridProps> = ({
       <div className="mb-5 border-b-2 border-[#2D231E]/10 pb-5">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <p className="mb-1 text-[13px] font-extrabold tracking-[0.08em] text-[#B94716]">
-              1週間・28枠
-            </p>
-            <h2 id="timeline-title" className="text-[22px] font-extrabold leading-tight text-[#2D231E] sm:text-[26px]">
-              ケアの担い手タイムライン
+            <h2 id="timeline-title" className="font-display text-[22px] font-bold leading-tight text-[#2D231E]">
+              1週間の担い手
             </h2>
-            <p className="mt-2 text-[14px] font-semibold leading-relaxed text-[#756A64]">
-              誰が・いつ支えているかを、色とラベルで見渡せます。
-            </p>
+            <p className="mt-1.5 text-[14px] text-[#6E625B]">押すと差し替えできます</p>
           </div>
-          <p className="max-w-[300px] text-[13px] font-semibold leading-relaxed text-[#756A64]">
-            カードを押すと、サービスの詳細確認や差し替えができます
-          </p>
+
+          {/* 凡例 */}
+          <div className="flex flex-wrap gap-3.5">
+            {(['family', 'insurance', 'paid', 'none'] as const).map((k) => {
+              const tok = SLOT_COLORS[k];
+              return (
+                <span
+                  key={k}
+                  className="inline-flex items-center gap-[7px] text-[13px] font-bold text-[#4A413A]"
+                >
+                  <span
+                    className="h-[14px] w-[14px] rounded"
+                    style={{
+                      background: tok.bgHex,
+                      border: `2px ${k === 'none' ? 'dashed' : 'solid'} ${tok.borderHex}`,
+                    }}
+                  />
+                  {tok.label}
+                </span>
+              );
+            })}
+          </div>
         </div>
 
         <div className="no-print mt-5 rounded-[18px] border-2 border-[#D9C9C0] bg-[#FFF7F2] p-3 sm:p-4">

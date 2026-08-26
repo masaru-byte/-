@@ -1,92 +1,143 @@
 /**
  * ヘッダー
  *
- * 主役は市民向け画面ただひとつ。行政・管理向けの画面は
- * 右上の控えめなリンクに格下げし、一般ユーザーを迷わせない。
+ * 主役は市民向け画面ひとつ。結果画面を見ているときだけ
+ * 「条件を変える」「ケアマネジャーに渡す」を出す。
+ * 自治体・管理向けの画面は右端の控えめなリンクに置く。
  */
 
 'use client';
 
 import React from 'react';
-import { Bird, Building2, Database } from 'lucide-react';
 
 export type ActiveTab = 'timeline' | 'gov' | 'admin';
+
+const INK = '#2D231E';
+const PRIMARY = '#C4511A';
+const SUB = '#6E625B';
 
 interface HeaderProps {
   activeTab: ActiveTab;
   onSelectTab: (tab: ActiveTab) => void;
   onHome: () => void;
+  /** 結果画面を見ているときだけ、条件変更と共有を出す */
+  showResultActions?: boolean;
+  onEditConditions?: () => void;
+  onHandoff?: () => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({ activeTab, onSelectTab, onHome }) => {
-  return (
-    <header className="sticky top-0 z-40 bg-stone-50 border-b-2 border-stone-900 no-print">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 gap-4">
-          {/* ブランド */}
-          <button
-            type="button"
-            onClick={onHome}
-            aria-label="けあしる ホームへ"
-            className="press min-h-11 flex items-center gap-2.5 rounded-xl"
-          >
-            <span className="w-10 h-10 rounded-full bg-orange-600 border-2 border-stone-900 flex items-center justify-center text-white shrink-0 shadow-[0_2px_0_#251B17]">
-              <Bird className="w-5 h-5" strokeWidth={2.5} />
-            </span>
-            <span>
-              <span className="block font-extrabold text-xl tracking-tight text-stone-900 leading-none">
-                けあしる
-              </span>
-              <span className="hidden sm:block mt-1 text-[13px] font-bold text-orange-700 leading-none">
-                暮らしのケア時間を見える形に
-              </span>
-            </span>
-          </button>
+export const Header: React.FC<HeaderProps> = ({
+  activeTab,
+  onSelectTab,
+  onHome,
+  showResultActions = false,
+  onEditConditions,
+  onHandoff,
+}) => {
+  const quietLink: React.CSSProperties = {
+    minHeight: 44,
+    padding: '0 10px',
+    fontSize: 13,
+    fontWeight: 700,
+    color: '#A99C92',
+    background: 'transparent',
+  };
 
-          {/* 関係者向けリンクと表示設定 */}
-          <div className="flex items-center gap-1">
-          <nav className="flex items-center gap-1 text-[13px]" aria-label="関係者向け">
+  return (
+    <header
+      className="no-print"
+      style={{
+        position: 'sticky',
+        top: 0,
+        zIndex: 40,
+        background: '#FFF8F3',
+        borderBottom: `2px solid ${INK}`,
+      }}
+    >
+      <div
+        style={{
+          maxWidth: 1180,
+          margin: '0 auto',
+          padding: '0 32px',
+          height: 68,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: 16,
+        }}
+      >
+        {/* ブランド */}
+        <button
+          type="button"
+          onClick={onHome}
+          aria-label="けあしる ホームへ"
+          style={{ display: 'flex', alignItems: 'center', gap: 10 }}
+        >
+          <svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true" style={{ flexShrink: 0 }}>
+            <rect width="32" height="32" rx="9" fill={PRIMARY} />
+            <rect x="9" y="9" width="14" height="14" rx="4" fill="#FFF8F3" />
+          </svg>
+          <span className="font-display" style={{ fontWeight: 900, fontSize: 19, color: INK, whiteSpace: 'nowrap' }}>
+            けあしる
+          </span>
+        </button>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+          {showResultActions && (
+            <>
+              <button
+                type="button"
+                onClick={onEditConditions}
+                style={{
+                  minHeight: 44, fontSize: 14, fontWeight: 700, color: SUB,
+                  textDecoration: 'underline', textUnderlineOffset: 4, whiteSpace: 'nowrap',
+                }}
+              >
+                条件を変える
+              </button>
+              <button
+                type="button"
+                onClick={onHandoff}
+                className="press"
+                style={{
+                  minHeight: 44, padding: '0 20px', borderRadius: 999,
+                  border: `2px solid ${INK}`, background: PRIMARY, color: '#fff',
+                  fontSize: 14, fontWeight: 700, boxShadow: `0 3px 0 ${INK}`, whiteSpace: 'nowrap',
+                }}
+              >
+                ケアマネジャーに渡す
+              </button>
+            </>
+          )}
+
+          {/* 関係者向け（控えめに） */}
+          <nav style={{ display: 'flex', alignItems: 'center' }} aria-label="関係者向け">
             {activeTab !== 'timeline' && (
               <button
                 type="button"
                 onClick={() => onSelectTab('timeline')}
-                aria-label="けあしるに戻る"
-                className="h-11 px-2.5 sm:px-3 rounded-xl font-bold text-orange-800 hover:bg-orange-100 transition-colors"
+                style={{ ...quietLink, color: '#B04512', textDecoration: 'underline', textUnderlineOffset: 4 }}
               >
-                <span className="sm:hidden" aria-hidden="true">←</span>
-                <span className="hidden sm:inline">← けあしるに戻る</span>
+                ← けあしるに戻る
               </button>
             )}
             <button
               type="button"
               onClick={() => onSelectTab('gov')}
-              aria-label="自治体の方へ"
               aria-current={activeTab === 'gov' ? 'page' : undefined}
-              className={`h-11 px-2.5 sm:px-3 rounded-xl font-semibold transition-colors inline-flex items-center gap-1.5 ${
-                activeTab === 'gov'
-                  ? 'text-orange-900 bg-orange-100'
-                  : 'text-stone-400 hover:text-stone-700 hover:bg-stone-50'
-              }`}
+              style={{ ...quietLink, color: activeTab === 'gov' ? INK : '#A99C92' }}
             >
-              <Building2 className="w-4 h-4 sm:hidden" aria-hidden="true" />
-              <span className="hidden sm:inline">自治体の方へ</span>
+              自治体の方へ
             </button>
             <button
               type="button"
               onClick={() => onSelectTab('admin')}
-              aria-label="サービス管理"
               aria-current={activeTab === 'admin' ? 'page' : undefined}
-              className={`h-11 px-2.5 sm:px-3 rounded-xl font-semibold transition-colors inline-flex items-center gap-1.5 ${
-                activeTab === 'admin'
-                  ? 'text-orange-900 bg-orange-100'
-                  : 'text-stone-400 hover:text-stone-700 hover:bg-stone-50'
-              }`}
+              style={{ ...quietLink, color: activeTab === 'admin' ? INK : '#A99C92' }}
             >
-              <Database className="w-4 h-4 sm:hidden" aria-hidden="true" />
-              <span className="hidden sm:inline">サービス管理</span>
+              サービス管理
             </button>
           </nav>
-          </div>
         </div>
       </div>
     </header>

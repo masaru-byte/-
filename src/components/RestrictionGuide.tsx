@@ -40,8 +40,11 @@ export const RestrictionGuide: React.FC<RestrictionGuideProps> = ({
         <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#FDE8DC]">
           <HelpCircle className="h-5 w-5 text-[#B94716]" />
         </span>
-        <span className="min-w-0 flex-1 text-sm font-bold text-[#2D231E] sm:text-base">
-          保険でできること／自費になること
+        <span className="min-w-0 flex-1">
+          <span className="block font-display text-[22px] font-bold text-[#2D231E]">確認すること</span>
+          <span className="mt-1 block text-[14px] font-normal text-[#6E625B]">
+            面談で聞くべき点をここにまとめています
+          </span>
         </span>
         <span className="shrink-0 rounded-full bg-[#FDE8DC] px-2.5 py-1 text-sm font-bold text-[#9D3D12] tabular-nums">
           {activeRules.length} 件

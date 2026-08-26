@@ -43,7 +43,8 @@ export const ServicePlanList: React.FC<ServicePlanListProps> = ({ slots, onSelec
         });
       }
     }
-    return [...map.values()].sort((a, b) => b.monthlyCost - a.monthlyCost);
+    // 仕様どおり「安い順」に並べる
+    return [...map.values()].sort((a, b) => a.monthlyCost - b.monthlyCost);
   }, [slots]);
 
   const total = rows.reduce((sum, r) => sum + r.monthlyCost, 0);
@@ -60,18 +61,11 @@ export const ServicePlanList: React.FC<ServicePlanListProps> = ({ slots, onSelec
 
   return (
     <section className="overflow-hidden rounded-[24px] border-2 border-[#2D231E] bg-white shadow-[0_4px_0_#2D231E]">
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b-2 border-[#2D231E] bg-[#FFF4EC] px-4 py-4 sm:px-6">
-        <h2 className="text-[18px] font-extrabold text-[#2D231E]">
-          このプランで使うサービス
-          <span className="ml-2 inline-flex min-h-8 items-center rounded-full border-2 border-[#2D231E] bg-white px-3 align-middle text-[13px] font-bold text-[#5E4D45] tabular-nums">
-            {rows.length} 種類
-          </span>
-        </h2>
-        <span className="inline-flex min-h-10 shrink-0 items-center rounded-full border-2 border-[#2D231E] bg-[#ED6A2C] px-4 text-[13px] font-bold text-[#2D231E]">
-          合計&nbsp;
-          <strong className="text-[16px] font-extrabold tabular-nums">¥{Math.round(total).toLocaleString()}</strong>
-          &nbsp;/月
-        </span>
+      <div className="border-b-2 border-[#2D231E] px-6 py-6 sm:px-7">
+        <h2 className="font-display text-[22px] font-bold text-[#2D231E]">頼むサービス</h2>
+        <p className="mt-1.5 text-[14px] text-[#6E625B] tabular-nums">
+          {rows.length} 種類・安い順・合計 ¥{Math.round(total).toLocaleString()}／月
+        </p>
       </div>
 
       <ul className="space-y-3 p-3 sm:p-4">
