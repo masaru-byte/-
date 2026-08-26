@@ -37,6 +37,8 @@ import { ServicePlanList } from '@/components/ServicePlanList';
 import { ResultHeader } from '@/components/ResultHeader';
 import { AskSection, HandoffSection } from '@/components/ResultFooterSections';
 import { HandoffView } from '@/components/HandoffView';
+import { ConsultChat, ConsultItem } from '@/components/ConsultChat';
+import { ConsultContext } from '@/utils/consult';
 import { AdminPipeline } from '@/components/AdminPipeline';
 import {
   Service,
@@ -78,6 +80,14 @@ export default function HomePage() {
   const [isShareModalOpen, setIsShareModalOpen] = useState<boolean>(false);
   // 送る画面（ケアマネジャーがリンクを開いたときの見え方）
   const [isHandoffOpen, setIsHandoffOpen] = useState<boolean>(false);
+
+  // 相談パネル
+  const [consult, setConsult] = useState<{ open: boolean; ctx: ConsultContext | null; seed: string }>(
+    { open: false, ctx: null, seed: '' }
+  );
+  const [consultItems, setConsultItems] = useState<ConsultItem[]>([]);
+  const openConsult = (ctx: ConsultContext | null, seed = '') =>
+    setConsult({ open: true, ctx, seed });
 
   // 初期スロット（Before状態）
   const initialSlots = useMemo(() => {
@@ -260,6 +270,7 @@ export default function HomePage() {
             slots={currentSlots}
             metrics={currentMetrics}
             initialFamilyHours={initialFamilyHours}
+            consultItems={consultItems}
             onBack={() => setIsHandoffOpen(false)}
             onPrint={handlePrint}
           />
@@ -318,13 +329,21 @@ export default function HomePage() {
                   />
 
                   {/* わからないことを聞く（サービス一覧の手前に置く） */}
-                  <AskSection onAsk={() => setIsShareModalOpen(true)} />
+                  <AskSection
+                    onAsk={(q) => openConsult(null, q)}
+                    items={consultItems}
+                    onRemoveItem={(id) =>
+                      setConsultItems((list) => list.filter((it) => it.id !== id))
+                    }
+                  />
 
                   {/* 頼むサービス */}
                   <ServicePlanList
                     slots={currentSlots}
                     onSelectSlot={(slot) => setActiveSlot(slot)}
-                    onAskService={() => setIsShareModalOpen(true)}
+                    onAskService={(serviceId, serviceName) =>
+                      openConsult({ serviceId, label: serviceName })
+                    }
                   />
 
                   {/* 確認すること（面談で聞くべき点） */}
@@ -365,6 +384,19 @@ export default function HomePage() {
         onSelectService={handleSelectServiceForSlot}
         onUpdatePerson={handleUpdatePerson}
         onChangeNeed={handleChangeNeedForSlot}
+      />
+
+      {/* 相談パネル（自由に書いて聞く） */}
+      <ConsultChat
+        isOpen={consult.open}
+        context={consult.ctx}
+        seedQuestion={consult.seed}
+        userInput={userInput}
+        slots={currentSlots}
+        metrics={currentMetrics}
+        budget={monthlyBudget}
+        onClose={() => setConsult((c) => ({ ...c, open: false }))}
+        onSaveItem={(item) => setConsultItems((list) => [...list, item])}
       />
 
       {/* 共有モーダル */}

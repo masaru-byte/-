@@ -8,6 +8,7 @@
 'use client';
 
 import React from 'react';
+import type { ConsultItem } from '@/components/ConsultChat';
 
 const INK = '#2D231E';
 const PRIMARY = '#C4511A';
@@ -28,7 +29,11 @@ interface ResultFooterSectionsProps {
 }
 
 /** わからないことを聞く（頼むサービスの手前に置く） */
-export const AskSection: React.FC<{ onAsk: (q: string) => void }> = ({ onAsk }) => (
+export const AskSection: React.FC<{
+  onAsk: (q: string) => void;
+  items?: ConsultItem[];
+  onRemoveItem?: (id: string) => void;
+}> = ({ onAsk, items = [], onRemoveItem }) => (
   <>
     {/* わからないことを聞く */}
     <section style={{ border: `2px solid ${INK}`, borderRadius: 16, background: '#FFF3EA', padding: '28px 30px' }}>
@@ -71,6 +76,55 @@ export const AskSection: React.FC<{ onAsk: (q: string) => void }> = ({ onAsk }) 
           </button>
         ))}
       </div>
+
+      {/* 相談パネルで追加したもの */}
+      {items.length > 0 && (
+        <div className="reveal is-in" style={{ marginTop: 24, borderTop: `2px solid ${INK}`, paddingTop: 22 }}>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 10 }}>
+            <h3 className="font-display" style={{ fontSize: 17, fontWeight: 700, color: INK }}>
+              ケアマネジャーに相談したいこと
+            </h3>
+            <span style={{ fontSize: 13, fontWeight: 700, color: PRIMARY }}>{items.length} 件</span>
+          </div>
+          <p style={{ marginTop: 6, fontSize: 13, lineHeight: 1.85, color: SUB }}>
+            送る画面と印刷にそのまま載ります。
+          </p>
+          <ul style={{ marginTop: 14, display: 'flex', flexDirection: 'column', gap: 10 }}>
+            {items.map((it) => (
+              <li
+                key={it.id}
+                className="swap"
+                style={{
+                  display: 'flex', alignItems: 'flex-start', gap: 12,
+                  border: `2px solid ${INK}`, borderRadius: 12, background: '#fff', padding: '14px 16px',
+                }}
+              >
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <span style={{ fontSize: 13, fontWeight: 700, color: '#8A3D07' }}>{it.title}</span>
+                  <p style={{ marginTop: 5, fontSize: 14, lineHeight: 1.9, color: INK }}>{it.text}</p>
+                </div>
+                {onRemoveItem && (
+                  <button
+                    type="button"
+                    onClick={() => onRemoveItem(it.id)}
+                    aria-label="削除する"
+                    className="press-sm"
+                    style={{
+                      flexShrink: 0, width: 34, height: 34, borderRadius: 999,
+                      border: '2px solid #DCCFC4', background: '#fff',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    }}
+                  >
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#6E625B" strokeWidth="2.6" strokeLinecap="round">
+                      <path d="M6 6l12 12M18 6L6 18" />
+                    </svg>
+                  </button>
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </section>
   </>
 );

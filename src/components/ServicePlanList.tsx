@@ -15,7 +15,7 @@ interface ServicePlanListProps {
   slots: TimelineSlot[];
   onSelectSlot: (slot: TimelineSlot) => void;
   /** 「このサービスについて聞く」から相談へ */
-  onAskService?: (serviceName: string) => void;
+  onAskService?: (serviceId: string, serviceName: string) => void;
 }
 
 /** 2026-08-20 → 2026年8月20日 */
@@ -174,7 +174,7 @@ export const ServicePlanList: React.FC<ServicePlanListProps> = ({ slots, onSelec
 
                     <button
                       type="button"
-                      onClick={() => (onAskService ? onAskService(row.service.name) : onSelectSlot(row.firstSlot))}
+                      onClick={() => (onAskService ? onAskService(row.service.id, row.service.name) : onSelectSlot(row.firstSlot))}
                       className="press mt-6 inline-flex min-h-12 items-center rounded-full border-2 border-[#DCCFC4] bg-white px-6 text-[15px] font-bold text-[#2D231E]"
                     >
                       このサービスについて聞く

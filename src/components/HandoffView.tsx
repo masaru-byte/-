@@ -12,6 +12,7 @@ import { DAYS_OF_WEEK, RESTRICTION_RULES, TIME_PERIODS, NEEDS_TAGS } from '@/con
 import { Service, TimelineMetrics, TimelineSlot, UserInputData } from '@/types';
 import { SLOT_COLORS, SCHEME_LABELS } from '@/utils/colors';
 import { CARE_LEVEL_LIMITS } from '@/constants/careConstants';
+import type { ConsultItem } from '@/components/ConsultChat';
 
 const INK = '#2D231E';
 const PRIMARY = '#C4511A';
@@ -22,6 +23,8 @@ interface HandoffViewProps {
   slots: TimelineSlot[];
   metrics: TimelineMetrics;
   initialFamilyHours: number;
+  /** 相談パネルでご家族が書き足したもの */
+  consultItems?: ConsultItem[];
   onBack: () => void;
   onPrint: () => void;
 }
@@ -44,6 +47,7 @@ export const HandoffView: React.FC<HandoffViewProps> = ({
   slots,
   metrics,
   initialFamilyHours,
+  consultItems = [],
   onBack,
   onPrint,
 }) => {
@@ -301,6 +305,32 @@ export const HandoffView: React.FC<HandoffViewProps> = ({
                   </li>
                 ))}
               </ol>
+            </div>
+          )}
+
+          {/* ご家族から相談したいこと */}
+          {consultItems.length > 0 && (
+            <div style={{ padding: '32px 36px', borderBottom: '1px solid #E8DCD3' }}>
+              <h2 className="font-display" style={{ fontSize: 18, fontWeight: 700, color: INK }}>
+                ご家族から相談したいこと
+              </h2>
+              <p style={{ marginTop: 6, fontSize: 14, color: SUB }}>
+                ご家族が相談パネルで書き足した内容です（{consultItems.length} 件）
+              </p>
+              <ul style={{ marginTop: 18, display: 'flex', flexDirection: 'column', gap: 12 }}>
+                {consultItems.map((it) => (
+                  <li
+                    key={it.id}
+                    style={{ border: `2px solid ${INK}`, borderRadius: 12, background: '#fff', padding: '14px 18px' }}
+                  >
+                    <span style={{ fontSize: 13, fontWeight: 700, color: '#8A3D07' }}>
+                      {it.title}
+                      {it.related ? `／${it.related}` : ''}
+                    </span>
+                    <p style={{ marginTop: 5, fontSize: 15, lineHeight: 1.9, color: INK }}>{it.text}</p>
+                  </li>
+                ))}
+              </ul>
             </div>
           )}
 
