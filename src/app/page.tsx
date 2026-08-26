@@ -242,8 +242,14 @@ export default function HomePage() {
         activeTab={activeTab}
         onSelectTab={setActiveTab}
         onHome={() => {
+          // ロゴはランディングへ戻る入口。開いているものを全部閉じて先頭から見せる。
           setActiveTab('timeline');
           setIsWizardOpen(false);
+          setIsHandoffOpen(false);
+          setConsult((c) => ({ ...c, open: false }));
+          setActiveSlot(null);
+          setHasStarted(false);
+          window.scrollTo(0, 0);
         }}
         showResultActions={activeTab === 'timeline' && hasStarted && !isWizardOpen}
         onEditConditions={() => setIsWizardOpen(true)}

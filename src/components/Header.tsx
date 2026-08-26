@@ -70,8 +70,10 @@ export const Header: React.FC<HeaderProps> = ({
         <button
           type="button"
           onClick={onHome}
-          aria-label="けあしる ホームへ"
-          style={{ display: 'flex', alignItems: 'center', gap: 10 }}
+          aria-label="けあしる トップページへ"
+          title="トップページへ"
+          className="press-sm"
+          style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }}
         >
           <svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true" style={{ flexShrink: 0 }}>
             <rect width="32" height="32" rx="9" fill={PRIMARY} />
