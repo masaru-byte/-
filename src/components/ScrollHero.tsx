@@ -226,8 +226,9 @@ export const ScrollHero: React.FC<ScrollHeroProps> = ({ onStart, onLoadDemo }) =
                 <span
                   style={{
                     display: 'inline-block',
-                    padding: '12px 22px',
-                    borderRadius: 16,
+                    padding: '20px 34px',
+                    borderRadius: 22,
+                    maxWidth: '92vw',
                     background: 'rgba(255,248,243,0.78)',
                     backdropFilter: 'blur(5px)',
                     WebkitBackdropFilter: 'blur(5px)',
@@ -236,15 +237,21 @@ export const ScrollHero: React.FC<ScrollHeroProps> = ({ onStart, onLoadDemo }) =
                   <span
                     className="font-display"
                     style={{
-                      fontSize: 'clamp(16px,2vw,24px)',
+                      // デザイン仕様の2倍
+                      fontSize: 'clamp(32px,4vw,48px)',
                       fontWeight: 900,
                       letterSpacing: '-0.01em',
+                      lineHeight: 1.35,
                       color: '#2D231E',
-                      background: 'linear-gradient(transparent 58%, #FDE8DC 58%)',
-                      padding: '0 8px',
+                      // マーカーの下塗りも文字サイズに合わせて厚くする
+                      background: 'linear-gradient(transparent 62%, #FDE8DC 62%)',
+                      padding: '0 12px',
+                      boxDecorationBreak: 'clone',
+                      WebkitBoxDecorationBreak: 'clone',
                     }}
                   >
-                    けあしるが代わりに情報を集めて、プランニングしてくれる
+                    <span style={{ display: 'inline-block' }}>けあしるが代わりに情報を集めて、</span>
+                    <span style={{ display: 'inline-block' }}>プランニングしてくれる</span>
                   </span>
                 </span>
               </p>
