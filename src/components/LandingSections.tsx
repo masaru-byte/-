@@ -52,8 +52,8 @@ const QDATA = [
 
 /* しくみアニメの刻み（デザイン仕様の値） */
 const QTICK = 70;      // 1ティックの長さ(ms)
-const TPC = 2;         // 1文字あたりのティック数
-const QPAUSE = 6;      // 行間の休止ティック
+const TPC = 3;         // 1文字あたりのティック数（タイプを見せるため遅め）
+const QPAUSE = 9;      // 行間の休止ティック
 const S1_STEP = 7;     // ステージ1で1件採用するごとのティック
 const S2_SEND = 17;    // ステージ2で共有が完了するティック
 
@@ -64,7 +64,7 @@ const Q_STARTS = QDATA.reduce<number[]>((acc, r, i) => {
   return acc;
 }, []);
 const Q_TOTAL = Q_STARTS[QDATA.length - 1] + QDATA[QDATA.length - 1].v.length * TPC + QPAUSE;
-const STAGE_TICKS = [Q_TOTAL, LADDER.length * S1_STEP, S2_SEND + 16];
+const STAGE_TICKS = [Q_TOTAL, LADDER.length * S1_STEP + 6, S2_SEND + 26];
 
 /** 画面に入ったら一度だけ true になる */
 function useInView<T extends HTMLElement>(threshold = 0.3) {
@@ -144,8 +144,8 @@ export const LandingSections: React.FC<LandingSectionsProps> = ({ onStart }) => 
   /* ---- 派生値 ---- */
   // ステージ1: 安い順に何件採用できたか
   const adopted = stage === 0 ? 0 : stage === 1 ? Math.min(LADDER.length, Math.floor(tick / S1_STEP)) : LADDER.length;
-  // ステージ2: 共有が完了したか
-  const sent = stage === 2 && tick >= S2_SEND;
+  // ステージ2: リンクが相手に届いたか（届くまでは右側は待機状態）
+  const arrived = stage === 2 && tick >= S2_SEND;
   // 左の週表で色がつく枠の数（採用数に応じて増える）
   const litRatio = stage === 0 ? 0 : stage === 1 ? adopted / LADDER.length : 1;
 
@@ -369,19 +369,25 @@ export const LandingSections: React.FC<LandingSectionsProps> = ({ onStart }) => 
                   style={{
                     marginTop: 16, display: 'flex', alignItems: 'center', gap: 11,
                     padding: '13px 15px', borderRadius: 12,
-                    border: `2px solid ${PRIMARY}`, background: '#241C18',
-                    opacity: sent ? 1 : 0.55,
-                    transform: sent ? 'none' : 'translateY(6px)',
-                    transition: 'opacity .5s ease, transform .5s cubic-bezier(.22,1,.36,1)',
+                    border: `2px solid ${arrived ? PRIMARY : '#4A3E37'}`,
+                    background: '#241C18',
+                    transition: 'border-color .5s cubic-bezier(.22,1,.36,1)',
                   }}
                 >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ED6A2C" strokeWidth="2.4" strokeLinecap="round" aria-hidden="true">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={arrived ? '#ED6A2C' : '#8A7F76'} strokeWidth="2.4" strokeLinecap="round" aria-hidden="true" style={{ transition: 'stroke .5s ease' }}>
                     <path d="M10 14l4-4" /><path d="M13.5 6.5l1.5-1.5a3.5 3.5 0 0 1 5 5l-1.5 1.5" /><path d="M10.5 17.5L9 19a3.5 3.5 0 0 1-5-5l1.5-1.5" />
                   </svg>
                   <span style={{ fontSize: 14, fontWeight: 700, color: '#F6F0EA' }}>keashiru.jp/p/8f2a</span>
-                  <span style={{ marginLeft: 'auto', display: 'inline-flex', alignItems: 'center', gap: 8, fontSize: 13, fontWeight: 700, color: '#ED6A2C' }}>
-                    {sent ? '開かれました' : '送信中'}
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ED6A2C" strokeWidth="2.6" strokeLinecap="round" aria-hidden="true">
+                  <span
+                    style={{
+                      marginLeft: 'auto', display: 'inline-flex', alignItems: 'center', gap: 8,
+                      fontSize: 13, fontWeight: 700,
+                      color: arrived ? '#ED6A2C' : '#8A7F76',
+                      transition: 'color .5s ease',
+                    }}
+                  >
+                    {arrived ? '開かれました' : '送りました'}
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={arrived ? '#ED6A2C' : '#8A7F76'} strokeWidth="2.6" strokeLinecap="round" aria-hidden="true" style={{ transition: 'stroke .5s ease' }}>
                       <path d="M5 12h13M13 6l6 6-6 6" />
                     </svg>
                   </span>
@@ -402,7 +408,7 @@ export const LandingSections: React.FC<LandingSectionsProps> = ({ onStart }) => 
                       position: 'absolute', left: 0, top: '50%', marginTop: -5,
                       width: 10, height: 10, borderRadius: 999, background: '#ED6A2C',
                       boxShadow: '0 0 12px 4px rgba(237,106,44,0.45)',
-                      opacity: sent ? 0 : 1,
+                      opacity: arrived ? 0 : 1,
                       animation: reduced ? undefined : 'zap 0.95s linear infinite',
                       transition: 'opacity .45s ease',
                     }}
@@ -416,60 +422,114 @@ export const LandingSections: React.FC<LandingSectionsProps> = ({ onStart }) => 
               {/* ===== ステージ0：上から順にタイプされて埋まる ===== */}
               <div
                 style={{
-                  position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 14,
+                  position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center',
                   opacity: stage === 0 ? 1 : 0, transform: stage === 0 ? 'none' : 'translateY(10px)',
                   transition: 'opacity .5s ease, transform .5s cubic-bezier(.22,1,.36,1)',
                   pointerEvents: stage === 0 ? 'auto' : 'none',
                 }}
               >
-                {QDATA.map((r, i) => {
-                  const startT = Q_STARTS[i];
-                  const typed = Math.max(0, Math.min(r.v.length, Math.floor((tick - startT) / TPC)));
-                  const typing = stage === 0 && tick >= startT && typed < r.v.length;
-                  const done = typed >= r.v.length;
-                  return (
-                    <div
-                      key={r.k}
-                      style={{
-                        border: `2px solid ${typing ? PRIMARY : '#4A3E37'}`,
-                        borderRadius: 12,
-                        padding: '14px 18px',
-                        background: '#2D231E',
-                        opacity: tick >= startT ? 1 : 0.35,
-                        transition: 'border-color .4s ease, opacity .4s ease',
-                      }}
-                    >
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
-                        <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.08em', color: '#A79A90' }}>{r.k}</span>
-                        <span
-                          aria-hidden="true"
+                {/* 「整理された条件」の枠。入力中はオレンジに点く */}
+                <div
+                  style={{
+                    border: `2px solid ${stage === 0 && tick < Q_TOTAL ? PRIMARY : '#4A3E37'}`,
+                    borderRadius: 16,
+                    background: '#2D231E',
+                    padding: 18,
+                    transition: 'border-color .55s cubic-bezier(.22,1,.36,1)',
+                  }}
+                >
+                  <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.1em', color: '#D98A55' }}>
+                    整理された条件
+                  </span>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 12 }}>
+                    {QDATA.map((r, i) => {
+                      const startT = Q_STARTS[i];
+                      const typed = Math.max(0, Math.min(r.v.length, Math.floor((tick - startT) / TPC)));
+                      const started = tick >= startT;
+                      const typing = stage === 0 && started && typed < r.v.length;
+                      const done = started && typed >= r.v.length;
+                      return (
+                        <div
+                          key={r.k}
                           style={{
-                            width: 20, height: 20, borderRadius: 999, background: PRIMARY,
-                            display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
-                            opacity: done ? 1 : 0,
-                            transform: done ? 'scale(1)' : 'scale(0.6)',
-                            transition: 'opacity .35s ease, transform .35s cubic-bezier(.22,1,.36,1)',
+                            border: `2px solid ${typing ? PRIMARY : '#4A3E37'}`,
+                            borderRadius: 12,
+                            padding: '13px 16px',
+                            background: typing ? '#332620' : '#241C18',
+                            // まだ順番が来ていない行は伏せておく
+                            opacity: started ? 1 : 0.3,
+                            transform: started ? 'none' : 'translateY(4px)',
+                            transition:
+                              'border-color .3s ease, background-color .3s ease, opacity .4s ease, transform .4s cubic-bezier(.22,1,.36,1)',
                           }}
                         >
-                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.4" strokeLinecap="round">
-                            <path d="M5 13l4 4L19 7" />
-                          </svg>
-                        </span>
-                      </div>
-                      <div style={{ marginTop: 6, height: 28, display: 'flex', alignItems: 'center', gap: 3 }}>
-                        <span style={{ fontSize: 20, fontWeight: 700, color: '#F6F0EA' }}>{r.v.slice(0, typed)}</span>
-                        {/* 入力中の行だけキャレットを出す */}
-                        <span
-                          aria-hidden="true"
-                          style={{
-                            width: typing ? 2 : 0, height: 21, background: PRIMARY,
-                            animation: reduced || !typing ? undefined : 'caretBlink 0.9s step-end infinite',
-                          }}
-                        />
-                      </div>
-                    </div>
-                  );
-                })}
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+                            <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.08em', color: '#A79A90' }}>
+                              {r.k}
+                            </span>
+                            <span
+                              aria-hidden="true"
+                              style={{
+                                width: 22, height: 22, borderRadius: 999, background: PRIMARY,
+                                display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                                opacity: done ? 1 : 0,
+                                transform: done ? 'scale(1)' : 'scale(0.5)',
+                                transition: 'opacity .3s ease, transform .35s cubic-bezier(.22,1,.36,1)',
+                              }}
+                            >
+                              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.4" strokeLinecap="round">
+                                <path d="M5 13l4 4L19 7" />
+                              </svg>
+                            </span>
+                          </div>
+
+                          {/* 1文字ずつ現れる値。入力中の行にだけキャレットを出す */}
+                          <div style={{ marginTop: 6, height: 30, display: 'flex', alignItems: 'center', gap: 2 }}>
+                            <span style={{ fontSize: 21, fontWeight: 700, color: '#F6F0EA', whiteSpace: 'pre' }}>
+                              {r.v.slice(0, typed)}
+                            </span>
+                            <span
+                              aria-hidden="true"
+                              style={{
+                                width: typing ? 3 : 0,
+                                height: 23,
+                                background: PRIMARY,
+                                borderRadius: 1,
+                                animation: reduced || !typing ? undefined : 'caretBlink 0.9s step-end infinite',
+                              }}
+                            />
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* 入力が終わると、左の表へ向かう矢印が出る */}
+                <div
+                  style={{
+                    marginTop: 16, display: 'flex', alignItems: 'center', gap: 10,
+                    opacity: stage === 0 && tick >= Q_TOTAL ? 1 : 0,
+                    transform: stage === 0 && tick >= Q_TOTAL ? 'none' : 'translateY(6px)',
+                    transition: 'opacity .5s ease .15s, transform .5s cubic-bezier(.22,1,.36,1) .15s',
+                  }}
+                >
+                  <span
+                    aria-hidden="true"
+                    style={{
+                      width: 30, height: 30, borderRadius: 999, background: PRIMARY,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                    }}
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.8" strokeLinecap="round">
+                      <path d="M19 12H6M12 6l-6 6 6 6" />
+                    </svg>
+                  </span>
+                  <span style={{ fontSize: 14, fontWeight: 500, color: '#BFB4AA' }}>
+                    この条件で、左の表を組みます
+                  </span>
+                </div>
               </div>
 
               {/* ===== ステージ1：安い順に採用 ===== */}
@@ -524,7 +584,7 @@ export const LandingSections: React.FC<LandingSectionsProps> = ({ onStart }) => 
                 })}
               </div>
 
-              {/* ===== ステージ2：ケアマネジャーの画面 ===== */}
+              {/* ===== ステージ2：ケアマネジャーの画面（届く前は待機） ===== */}
               <div
                 style={{
                   position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center',
@@ -533,27 +593,39 @@ export const LandingSections: React.FC<LandingSectionsProps> = ({ onStart }) => 
                   pointerEvents: stage === 2 ? 'auto' : 'none',
                 }}
               >
-                <div style={{ border: `2px solid ${PRIMARY}`, borderRadius: 16, background: '#2D231E', padding: 20 }}>
+                <div
+                  style={{
+                    // 届くまでは点灯させない
+                    border: `2px solid ${arrived ? PRIMARY : '#4A3E37'}`,
+                    borderRadius: 16,
+                    background: '#2D231E',
+                    padding: 20,
+                    boxShadow: arrived ? '0 0 0 4px rgba(237,106,44,0.12)' : 'none',
+                    transition: 'border-color .55s cubic-bezier(.22,1,.36,1), box-shadow .55s ease',
+                  }}
+                >
                   <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-                    <span aria-hidden="true" style={{ width: 44, height: 44, borderRadius: 999, background: '#3A2E27', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <span aria-hidden="true" style={{ width: 46, height: 46, borderRadius: 999, background: '#3A2E27', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#BFB4AA" strokeWidth="2" strokeLinecap="round">
                         <path d="M5.5 19.5a6.5 6.5 0 0 1 13 0" />
                         <path d="M12 12.4a3.4 3.4 0 1 1 0-6.8 3.4 3.4 0 0 1 0 6.8z" />
                       </svg>
                     </span>
                     <div style={{ minWidth: 0, flex: 1 }}>
-                      <div style={{ fontSize: 19, fontWeight: 700, color: '#F6F0EA' }}>ケアマネジャーの画面</div>
-                      <div style={{ marginTop: 4, fontSize: 13, color: '#BFB4AA', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                        ご家族と同じ表を、そのまま見ています
+                      <div style={{ fontSize: 20, fontWeight: 700, color: '#F6F0EA' }}>ケアマネジャーの画面</div>
+                      <div style={{ marginTop: 4, fontSize: 13, color: '#BFB4AA', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        {arrived ? 'ご家族と同じ表を、そのまま見ています' : 'リンクが届くのを待っています'}
                       </div>
                     </div>
+                    {/* 届いた瞬間にバッジが現れる */}
                     <span
                       style={{
                         display: 'inline-flex', alignItems: 'center', gap: 7, flexShrink: 0,
-                        padding: '9px 16px', borderRadius: 999, background: PRIMARY,
-                        fontSize: 13, fontWeight: 700, color: '#fff',
-                        opacity: sent ? 1 : 0, transform: sent ? 'none' : 'translateY(-4px)',
-                        transition: 'opacity .45s ease, transform .45s cubic-bezier(.22,1,.36,1)',
+                        padding: '10px 17px', borderRadius: 999, background: PRIMARY,
+                        fontSize: 13, fontWeight: 700, color: '#fff', whiteSpace: 'nowrap',
+                        opacity: arrived ? 1 : 0,
+                        transform: arrived ? 'scale(1)' : 'scale(0.82)',
+                        transition: 'opacity .4s ease, transform .45s cubic-bezier(.22,1,.36,1)',
                       }}
                     >
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.4" strokeLinecap="round">
@@ -563,24 +635,52 @@ export const LandingSections: React.FC<LandingSectionsProps> = ({ onStart }) => 
                     </span>
                   </div>
 
-                  {/* ミニ週表 */}
-                  <div style={{ marginTop: 16, border: '2px solid #4A3E37', borderRadius: 12, padding: 10 }}>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7,minmax(0,1fr))', gap: 4 }}>
-                      {FLOWPLAN.map((k, i) => {
-                        const tok = SLOT_COLORS[k];
-                        return (
-                          <div
-                            key={i}
-                            style={{
-                              height: 13, borderRadius: 4,
-                              background: tok.bgHex,
-                              border: `1.5px ${k === 'none' ? 'dashed' : 'solid'} ${tok.borderHex}`,
-                            }}
-                          />
-                        );
-                      })}
+                  {/* 届く前は空の点線枠、届いたらミニ週表が入る */}
+                  <div
+                    style={{
+                      marginTop: 16, position: 'relative', minHeight: 108,
+                      border: `2px ${arrived ? 'solid' : 'dashed'} #4A3E37`,
+                      borderRadius: 12, padding: 10,
+                      transition: 'border-style .3s ease',
+                    }}
+                  >
+                    {/* 待機表示 */}
+                    <div
+                      style={{
+                        position: 'absolute', inset: 0, display: 'flex', alignItems: 'flex-end', padding: 12,
+                        opacity: arrived ? 0 : 1,
+                        transition: 'opacity .35s ease',
+                        pointerEvents: 'none',
+                      }}
+                    >
+                      <span style={{ fontSize: 13, color: '#8A7F76' }}>リンクを開くと、ここに同じ表が入ります</span>
                     </div>
-                    <p style={{ marginTop: 12, fontSize: 12, color: '#A79A90' }}>家族が担う枠には、印がついたまま届きます</p>
+
+                    {/* 到着後：同じ週表が流し込まれる */}
+                    <div style={{ opacity: arrived ? 1 : 0, transition: 'opacity .45s ease .12s' }}>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7,minmax(0,1fr))', gap: 4 }}>
+                        {FLOWPLAN.map((k, i) => {
+                          const tok = SLOT_COLORS[k];
+                          return (
+                            <div
+                              key={i}
+                              style={{
+                                height: 14, borderRadius: 4,
+                                background: tok.bgHex,
+                                border: `1.5px ${k === 'none' ? 'dashed' : 'solid'} ${tok.borderHex}`,
+                                // 左上から順に流し込まれる
+                                opacity: arrived ? 1 : 0,
+                                transform: arrived ? 'none' : 'scale(0.7)',
+                                transition: `opacity .3s ease ${140 + i * 14}ms, transform .35s cubic-bezier(.22,1,.36,1) ${140 + i * 14}ms`,
+                              }}
+                            />
+                          );
+                        })}
+                      </div>
+                      <p style={{ marginTop: 12, fontSize: 12, color: '#A79A90' }}>
+                        家族が担う枠には、印がついたまま届きます
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
