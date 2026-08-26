@@ -40,7 +40,7 @@ export const ResultHeader: React.FC<ResultHeaderProps> = ({
 
   const big: React.CSSProperties = {
     fontFamily: 'var(--font-display)',
-    fontSize: 'clamp(48px,6vw,76px)',
+    fontSize: 'clamp(40px,5.2vw,72px)',
     fontWeight: 900,
     color: PRIMARY,
     fontVariantNumeric: 'tabular-nums',
@@ -61,12 +61,17 @@ export const ResultHeader: React.FC<ResultHeaderProps> = ({
             fontWeight: 700,
             lineHeight: 1.65,
             letterSpacing: '-0.02em',
-            maxWidth: '30ch',
+            maxWidth: '34ch',
             color: INK,
           }}
         >
-          月<span style={big}>{displayTotal.toLocaleString()}</span>円で、週
-          <span style={big}>{displaySaved.toFixed(1)}</span>時間を頼めます。
+          {/* 「月◯円で、」「週◯時間を頼めます。」を塊で折り返す */}
+          <span style={{ display: 'inline-block', whiteSpace: 'nowrap' }}>
+            月<span style={big}>{displayTotal.toLocaleString()}</span>円で、
+          </span>
+          <span style={{ display: 'inline-block', whiteSpace: 'nowrap' }}>
+            週<span style={big}>{displaySaved.toFixed(1)}</span>時間を頼めます。
+          </span>
         </h1>
         <p style={{ marginTop: 18, fontSize: 17, lineHeight: 1.9, color: SUB, maxWidth: '46ch' }}>
           残る家族の負担は週 {metrics.familyHoursPerWeek.toFixed(1)} 時間。28枠のうち{' '}

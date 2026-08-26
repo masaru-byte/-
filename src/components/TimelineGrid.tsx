@@ -36,7 +36,7 @@ interface TimelineGridProps {
 }
 
 /** 時間帯ラベル列 + 曜日7列（必ず等幅） */
-const GRID_COLS = 'grid-cols-[108px_repeat(7,minmax(0,1fr))]';
+const GRID_COLS = 'grid-cols-[76px_repeat(7,minmax(0,1fr))]';
 
 type ResponsibilityFilter = 'all' | SlotState;
 
@@ -429,7 +429,7 @@ export const TimelineGrid: React.FC<TimelineGridProps> = ({
           {...grid.containerProps}
           data-dragging={isLive ? 'true' : undefined}
           data-dnd={draggedSlotId ? 'true' : undefined}
-          className={`grid ${GRID_COLS} min-w-[1080px] items-stretch gap-3 ${grid.containerProps.className ?? ''}`}
+          className={`grid ${GRID_COLS} min-w-[860px] items-stretch gap-2 ${grid.containerProps.className ?? ''}`}
         >
           <div className="self-end p-2 text-left text-[13px] font-extrabold text-[#756A64]">
             時間帯

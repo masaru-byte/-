@@ -35,7 +35,7 @@ import { PrintView } from '@/components/PrintView';
 import { GovDashboard } from '@/components/GovDashboard';
 import { ServicePlanList } from '@/components/ServicePlanList';
 import { ResultHeader } from '@/components/ResultHeader';
-import { ResultFooterSections } from '@/components/ResultFooterSections';
+import { AskSection, HandoffSection } from '@/components/ResultFooterSections';
 import { AdminPipeline } from '@/components/AdminPipeline';
 import {
   Service,
@@ -296,10 +296,14 @@ export default function HomePage() {
                     isLive={isBudgetLive}
                   />
 
+                  {/* わからないことを聞く（サービス一覧の手前に置く） */}
+                  <AskSection onAsk={() => setIsShareModalOpen(true)} />
+
                   {/* 頼むサービス */}
                   <ServicePlanList
                     slots={currentSlots}
                     onSelectSlot={(slot) => setActiveSlot(slot)}
+                    onAskService={() => setIsShareModalOpen(true)}
                   />
 
                   {/* 確認すること（面談で聞くべき点） */}
@@ -309,9 +313,8 @@ export default function HomePage() {
                     careLevel={userInput.careLevel}
                   />
 
-                  {/* 相談への入り口 ＆ ケアマネジャーへ渡す */}
-                  <ResultFooterSections
-                    onAsk={() => setIsShareModalOpen(true)}
+                  {/* ケアマネジャーへ渡す */}
+                  <HandoffSection
                     onShare={() => setIsShareModalOpen(true)}
                     onPrint={handlePrint}
                   />
