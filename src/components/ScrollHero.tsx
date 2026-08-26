@@ -483,7 +483,8 @@ export const ScrollHero: React.FC<ScrollHeroProps> = ({ onStart, onLoadDemo }) =
                       style={{
                         display: 'grid',
                         gridTemplateColumns: 'repeat(7,minmax(0,1fr))',
-                        gap: 9,
+                        // 狭い画面でマスが潰れないよう、隙間から先に詰める
+                        gap: 'clamp(4px,1.2vw,9px)',
                         marginBottom: 9,
                       }}
                     >
@@ -492,7 +493,7 @@ export const ScrollHero: React.FC<ScrollHeroProps> = ({ onStart, onLoadDemo }) =
                           key={d}
                           style={{
                             textAlign: 'center',
-                            fontSize: 12,
+                            fontSize: 'clamp(10px,2.6vw,12px)',
                             fontWeight: 700,
                             letterSpacing: '0.08em',
                             color: '#8A7F76',
@@ -508,7 +509,7 @@ export const ScrollHero: React.FC<ScrollHeroProps> = ({ onStart, onLoadDemo }) =
                       style={{
                         display: 'grid',
                         gridTemplateColumns: 'repeat(7,minmax(0,1fr))',
-                        gap: 9,
+                        gap: 'clamp(4px,1.2vw,9px)',
                       }}
                     >
                       {H.cells.map((c, i) => (
@@ -524,10 +525,11 @@ export const ScrollHero: React.FC<ScrollHeroProps> = ({ onStart, onLoadDemo }) =
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            padding: '0 5px',
-                            fontSize: 11,
+                            padding: '0 clamp(2px,0.7vw,5px)',
+                            fontSize: 'clamp(8.5px,2.3vw,11px)',
                             fontWeight: 700,
-                            lineHeight: 1.3,
+                            lineHeight: 1.25,
+                            overflow: 'hidden',
                             textAlign: 'center',
                             color: '#2D231E',
                           }}

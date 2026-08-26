@@ -9,6 +9,7 @@
 'use client';
 
 import React from 'react';
+import { useIsNarrow } from '@/hooks/useIsNarrow';
 
 export type ActiveTab = 'timeline' | 'gov' | 'admin';
 
@@ -39,6 +40,9 @@ export const Header: React.FC<HeaderProps> = ({
   onEditConditions,
   onHandoff,
 }) => {
+  // 狭い画面ではヘッダーに全部は収まらないので、文言と余白を詰める
+  const narrow = useIsNarrow();
+
   const quietLink: React.CSSProperties = {
     minHeight: 44,
     padding: '0 10px',
@@ -84,35 +88,37 @@ export const Header: React.FC<HeaderProps> = ({
             <rect width="32" height="32" rx="9" fill={PRIMARY} />
             <rect x="9" y="9" width="14" height="14" rx="4" fill="#FFF8F3" />
           </svg>
-          <span className="font-display" style={{ fontWeight: 900, fontSize: 19, color: INK, whiteSpace: 'nowrap' }}>
+          <span className="font-display" style={{ fontWeight: 900, fontSize: narrow ? 17 : 19, color: INK, whiteSpace: 'nowrap' }}>
             けあしる
           </span>
         </button>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: narrow ? 8 : 14, minWidth: 0 }}>
           {showResultActions && (
             <>
               <button
                 type="button"
                 onClick={onEditConditions}
                 style={{
-                  minHeight: 44, fontSize: 14, fontWeight: 700, color: SUB,
+                  minHeight: 44, padding: narrow ? '0 2px' : 0,
+                  fontSize: narrow ? 13 : 14, fontWeight: 700, color: SUB,
                   textDecoration: 'underline', textUnderlineOffset: 4, whiteSpace: 'nowrap',
                 }}
               >
-                条件を変える
+                {narrow ? '条件' : '条件を変える'}
               </button>
               <button
                 type="button"
                 onClick={onHandoff}
                 className="press"
                 style={{
-                  minHeight: 44, padding: '0 20px', borderRadius: 999,
+                  minHeight: 44, padding: narrow ? '0 14px' : '0 20px', borderRadius: 999,
                   border: `2px solid ${INK}`, background: PRIMARY, color: '#fff',
-                  fontSize: 14, fontWeight: 700, boxShadow: `0 3px 0 ${INK}`, whiteSpace: 'nowrap',
+                  fontSize: narrow ? 13 : 14, fontWeight: 700, boxShadow: `0 3px 0 ${INK}`,
+                  whiteSpace: 'nowrap',
                 }}
               >
-                ケアマネジャーに渡す
+                {narrow ? 'ケアマネに渡す' : 'ケアマネジャーに渡す'}
               </button>
             </>
           )}
@@ -124,9 +130,9 @@ export const Header: React.FC<HeaderProps> = ({
               onClick={onStart}
               className="press"
               style={{
-                minHeight: 44, padding: '0 20px', borderRadius: 999,
+                minHeight: 44, padding: narrow ? '0 16px' : '0 20px', borderRadius: 999,
                 border: `2px solid ${INK}`, background: PRIMARY, color: '#fff',
-                fontSize: 14, fontWeight: 700, boxShadow: `0 3px 0 ${INK}`,
+                fontSize: narrow ? 13 : 14, fontWeight: 700, boxShadow: `0 3px 0 ${INK}`,
                 whiteSpace: 'nowrap', cursor: 'pointer',
                 display: 'inline-flex', alignItems: 'center', gap: 7,
               }}

@@ -9,6 +9,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { SLOT_COLORS } from '@/utils/colors';
+import { useIsNarrow } from '@/hooks/useIsNarrow';
 
 const INK = '#2D231E';
 const CREAM = '#FFF8F3';
@@ -21,6 +22,46 @@ const EXAMPLES = [
   { short: '部屋の掃除', price: '1時間 1,350円', provider: 'シルバー人材センター', d: 'M6 12h12' },
   { short: '病院での付き添い', price: '1時間 3,300円', provider: '便利屋ベンリー', d: 'M12 6v12M6 12h12' },
 ];
+
+/** 保険外サービスの実例カード1枚 */
+const ExampleCard: React.FC<{ e: (typeof EXAMPLES)[number] }> = ({ e }) => (
+  <div
+    style={{
+      border: `2px solid ${INK}`,
+      borderRadius: 16,
+      background: '#fff',
+      padding: 'clamp(22px,5vw,34px) clamp(20px,5vw,30px)',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'flex-start',
+      height: '100%',
+    }}
+  >
+    <span
+      aria-hidden="true"
+      style={{
+        width: 60, height: 60, borderRadius: 15, background: '#FDE8DC',
+        display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+      }}
+    >
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke={PRIMARY} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="8" />
+        <path d={e.d} />
+      </svg>
+    </span>
+    <div style={{ marginTop: 24, fontSize: 'clamp(19px,4.6vw,21px)', fontWeight: 700, lineHeight: 1.5 }}>{e.short}</div>
+    <div
+      className="font-display"
+      style={{
+        marginTop: 12, fontSize: 'clamp(26px,6.4vw,32px)', fontWeight: 900, color: PRIMARY,
+        fontVariantNumeric: 'tabular-nums', lineHeight: 1.1,
+      }}
+    >
+      {e.price}
+    </div>
+    <div style={{ marginTop: 'auto', paddingTop: 20, fontSize: 13, color: SUB }}>{e.provider}</div>
+  </div>
+);
 
 /* ---------- しくみ：3ステージ ---------- */
 const STAGES = [
@@ -107,12 +148,26 @@ export const LandingSections: React.FC<LandingSectionsProps> = ({ onStart }) => 
   const [statRef, statSeen] = useInView<HTMLElement>(0.4);
   const [stage, setStage] = useState(0);
   const [tick, setTick] = useState(0);
+  // 狭い画面かどうか。レイアウトを組み替えるところだけで使う
+  const narrow = useIsNarrow();
+  // 実例カード：狭い画面では1枚ずつ入れ替える
+  const [exIdx, setExIdx] = useState(0);
   // 判定は初回レンダー時に一度だけ（エフェクト内の同期 setState を避ける）
   const [reduced] = useState(
     () =>
       typeof window !== 'undefined' &&
       window.matchMedia('(prefers-reduced-motion: reduce)').matches
   );
+
+  // 実例カードの入れ替え。狭い画面のときだけ回す
+  useEffect(() => {
+    if (!narrow || reduced) return;
+    const id = window.setInterval(
+      () => setExIdx((i) => (i + 1) % EXAMPLES.length),
+      3400
+    );
+    return () => window.clearInterval(id);
+  }, [narrow, reduced]);
 
   /**
    * ステージ内をティックで進め、終端に達したら次のステージへ。
@@ -165,7 +220,7 @@ export const LandingSections: React.FC<LandingSectionsProps> = ({ onStart }) => 
   return (
     <div style={{ background: CREAM, color: INK }}>
       {/* ============ 保険外サービス例 ============ */}
-      <section style={{ maxWidth: 1180, margin: '0 auto', padding: '112px 32px 0' }}>
+      <section style={{ maxWidth: 1180, margin: '0 auto', padding: 'clamp(56px,9vw,112px) clamp(16px,4vw,32px) 0' }}>
         <p style={{ textAlign: 'center', fontSize: 13, fontWeight: 700, letterSpacing: '0.16em', color: '#B04512' }}>
           保険外サービス
         </p>
@@ -175,74 +230,77 @@ export const LandingSections: React.FC<LandingSectionsProps> = ({ onStart }) => 
         >
           介護保険では、頼めません
         </h2>
-        <div
-          style={{
-            marginTop: 48,
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit,minmax(260px,1fr))',
-            gap: 20,
-          }}
-        >
-          {EXAMPLES.map((e) => (
-            <div
-              key={e.short}
-              style={{
-                border: `2px solid ${INK}`,
-                borderRadius: 16,
-                background: '#fff',
-                padding: '34px 30px',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'flex-start',
-              }}
-            >
-              <span
-                aria-hidden="true"
-                style={{
-                  width: 60, height: 60, borderRadius: 15, background: '#FDE8DC',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                }}
-              >
-                <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke={PRIMARY} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="12" cy="12" r="8" />
-                  <path d={e.d} />
-                </svg>
-              </span>
-              <div style={{ marginTop: 24, fontSize: 21, fontWeight: 700, lineHeight: 1.5 }}>{e.short}</div>
-              <div
-                className="font-display"
-                style={{ marginTop: 12, fontSize: 32, fontWeight: 900, color: PRIMARY, fontVariantNumeric: 'tabular-nums', lineHeight: 1.1 }}
-              >
-                {e.price}
+        {narrow ? (
+          /* 狭い画面では3枚並べると縦に長くなりすぎるので、1枚ずつ入れ替える */
+          <div style={{ marginTop: 32 }}>
+            <div style={{ minHeight: 232 }}>
+              <div key={EXAMPLES[exIdx].short} className="swap">
+                <ExampleCard e={EXAMPLES[exIdx]} />
               </div>
-              <div style={{ marginTop: 'auto', paddingTop: 20, fontSize: 13, color: SUB }}>{e.provider}</div>
             </div>
-          ))}
-        </div>
+            <div
+              role="tablist"
+              aria-label="保険外サービスの実例"
+              style={{ marginTop: 16, display: 'flex', justifyContent: 'center', gap: 10 }}
+            >
+              {EXAMPLES.map((e, i) => (
+                <button
+                  key={e.short}
+                  type="button"
+                  role="tab"
+                  aria-selected={i === exIdx}
+                  aria-label={e.short}
+                  onClick={() => setExIdx(i)}
+                  style={{
+                    width: i === exIdx ? 26 : 10,
+                    height: 10,
+                    borderRadius: 999,
+                    background: i === exIdx ? PRIMARY : '#E0D2C6',
+                    transition: 'width .32s cubic-bezier(.22,1,.36,1), background-color .32s ease',
+                  }}
+                />
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div
+            style={{
+              marginTop: 48,
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit,minmax(260px,1fr))',
+              gap: 20,
+            }}
+          >
+            {EXAMPLES.map((e) => (
+              <ExampleCard key={e.short} e={e} />
+            ))}
+          </div>
+        )}
       </section>
 
       {/* ============ 60%統計バンド ============ */}
-      <section ref={statRef} style={{ maxWidth: 1180, margin: '0 auto', padding: '104px 32px 0' }}>
+      <section ref={statRef} style={{ maxWidth: 1180, margin: '0 auto', padding: 'clamp(52px,8vw,104px) clamp(16px,4vw,32px) 0' }}>
         <div
           style={{
             border: `2px solid ${INK}`,
             borderRadius: 20,
             background: '#FDE8DC',
-            padding: '52px 48px',
+            padding: 'clamp(28px,6vw,52px) clamp(22px,5.5vw,48px)',
             display: 'grid',
-            gridTemplateColumns: 'auto 1fr',
-            gap: 52,
+            // 狭い画面では数字を上、文章を下に積む
+            gridTemplateColumns: narrow ? 'minmax(0,1fr)' : 'auto minmax(0,1fr)',
+            gap: narrow ? 20 : 52,
             alignItems: 'center',
           }}
         >
           <div
             className="font-display"
-            style={{ fontSize: 'clamp(76px,10vw,140px)', fontWeight: 900, color: PRIMARY, lineHeight: 0.86, fontVariantNumeric: 'tabular-nums' }}
+            style={{ fontSize: 'clamp(64px,17vw,140px)', fontWeight: 900, color: PRIMARY, lineHeight: 0.86, fontVariantNumeric: 'tabular-nums' }}
           >
             60<span style={{ fontSize: '0.42em' }}>%</span>
           </div>
           <div>
-            <p style={{ fontSize: 'clamp(19px,2.3vw,27px)', fontWeight: 700, lineHeight: 1.7 }}>
+            <p style={{ fontSize: 'clamp(18px,4.4vw,27px)', fontWeight: 700, lineHeight: 1.7 }}>
               使ったことがない人のうち、
               <br />
               「知っていたら使いたかった」
@@ -267,7 +325,7 @@ export const LandingSections: React.FC<LandingSectionsProps> = ({ onStart }) => 
 
       {/* ============ しくみ ============ */}
       <section style={{ background: INK, color: '#F6F0EA', marginTop: 112 }}>
-        <div style={{ maxWidth: 1180, margin: '0 auto', padding: '96px 32px' }}>
+        <div style={{ maxWidth: 1180, margin: '0 auto', padding: 'clamp(52px,8vw,96px) clamp(16px,4vw,32px)' }}>
           <p style={{ textAlign: 'center', fontSize: 13, fontWeight: 700, letterSpacing: '0.16em', color: '#D98A55' }}>
             しくみ
           </p>
@@ -279,7 +337,17 @@ export const LandingSections: React.FC<LandingSectionsProps> = ({ onStart }) => 
           </h2>
 
           {/* ステージ切替 */}
-          <div style={{ marginTop: 52, display: 'flex', alignItems: 'stretch', justifyContent: 'center' }}>
+          <div
+            style={{
+              marginTop: 'clamp(28px,5vw,52px)',
+              display: 'flex',
+              // 狭い画面では横に3つ並べると見出しが1文字ずつ折り返すので縦に積む
+              flexDirection: narrow ? 'column' : 'row',
+              alignItems: 'stretch',
+              justifyContent: 'center',
+              gap: narrow ? 4 : 0,
+            }}
+          >
             {STAGES.map((s, i) => (
               <button
                 key={s.title}
@@ -288,8 +356,8 @@ export const LandingSections: React.FC<LandingSectionsProps> = ({ onStart }) => 
                 aria-current={stage === i ? 'step' : undefined}
                 style={{
                   flex: 1,
-                  maxWidth: 280,
-                  padding: '20px 18px 22px',
+                  maxWidth: narrow ? 'none' : 280,
+                  padding: narrow ? '14px 4px 16px' : '20px 18px 22px',
                   borderTop: `3px solid ${stage === i ? PRIMARY : '#4A3E37'}`,
                   opacity: stage === i ? 1 : 0.34,
                   transition: 'opacity .45s ease, border-color .45s ease',
@@ -310,7 +378,7 @@ export const LandingSections: React.FC<LandingSectionsProps> = ({ onStart }) => 
                   </span>
                   <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.1em', color: '#A79A90' }}>{s.who}</span>
                 </span>
-                <span style={{ display: 'block', marginTop: 14, fontSize: 'clamp(17px,1.8vw,21px)', fontWeight: 700, lineHeight: 1.5 }}>
+                <span style={{ display: 'block', marginTop: narrow ? 8 : 14, fontSize: 'clamp(16px,4vw,21px)', fontWeight: 700, lineHeight: 1.5 }}>
                   {s.title}
                 </span>
               </button>
@@ -320,19 +388,20 @@ export const LandingSections: React.FC<LandingSectionsProps> = ({ onStart }) => 
           {/* パネル：左=週表 / 右=ステージ別の内容 */}
           <div
             style={{
-              marginTop: 36,
+              marginTop: narrow ? 24 : 36,
               border: '2px solid #4A3E37',
               borderRadius: 20,
               background: '#241C18',
-              padding: 44,
+              padding: 'clamp(18px,4.5vw,44px)',
               display: 'grid',
               // 列構成はステージによらず固定。移動した瞬間に枠の形が変わらないようにする
-              gridTemplateColumns: 'minmax(0,1fr) 56px minmax(0,1fr)',
-              gap: 20,
+              // 狭い画面だけは3列に収まらないので、週表→コネクタ→内容の順に縦に積む
+              gridTemplateColumns: narrow ? 'minmax(0,1fr)' : 'minmax(0,1fr) 56px minmax(0,1fr)',
+              gap: narrow ? 8 : 20,
               // 上下中央。リンク行は高さをアニメーションさせるので、
               // 中央位置も一気に飛ばず滑らかに移動する
               alignItems: 'center',
-              minHeight: 432,
+              minHeight: narrow ? 0 : 432,
             }}
           >
             {/* ---------- 左：週表 ---------- */}
@@ -369,7 +438,9 @@ export const LandingSections: React.FC<LandingSectionsProps> = ({ onStart }) => 
                 </div>
               </div>
 
-              <div style={{ position: 'absolute', top: '100%', left: 0, right: 0 }}>
+              {/* 凡例とリンク行。横並びのときは絶対配置にして週表の中央位置を固定するが、
+                  縦積みのときは下の内容に重なるので、素直に流し込む。 */}
+              <div style={narrow ? undefined : { position: 'absolute', top: '100%', left: 0, right: 0 }}>
               <div style={{ marginTop: 18, display: 'flex', gap: 16, flexWrap: 'wrap' }}>
                 {(['family', 'insurance', 'paid'] as const).map((k) => (
                   <span key={k} style={{ display: 'inline-flex', alignItems: 'center', gap: 7, fontSize: 12, fontWeight: 700, color: '#BFB4AA' }}>
@@ -426,9 +497,22 @@ export const LandingSections: React.FC<LandingSectionsProps> = ({ onStart }) => 
             </div>
 
             {/* ---------- 中央：コネクタ（ステージ2のみ） ---------- */}
-            <div aria-hidden="true" style={{ position: 'relative', height: 40, display: 'flex', alignItems: 'center', opacity: stage === 2 ? 1 : 0, transition: 'opacity .5s ease' }}>
+            <div
+              aria-hidden="true"
+              style={{
+                height: 40, display: 'flex', alignItems: 'center',
+                justifyContent: narrow ? 'center' : 'stretch',
+                opacity: stage === 2 ? 1 : 0, transition: 'opacity .5s ease',
+              }}
+            >
               {stage === 2 && (
-                <>
+                /* 縦積みのときは同じ矢印を90度倒して、下へ流れるように見せる */
+                <div
+                  style={{
+                    position: 'relative', display: 'flex', alignItems: 'center',
+                    ...(narrow ? { width: 48, transform: 'rotate(90deg)' } : { flex: 1 }),
+                  }}
+                >
                   <span style={{ flex: 1, borderTop: '2px dashed #ED6A2C' }} />
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ED6A2C" strokeWidth="3" strokeLinecap="round" style={{ marginLeft: -2 }}>
                     <path d="M8 5l7 7-7 7" />
@@ -443,12 +527,12 @@ export const LandingSections: React.FC<LandingSectionsProps> = ({ onStart }) => 
                       transition: 'opacity .45s ease',
                     }}
                   />
-                </>
+                </div>
               )}
             </div>
 
             {/* ---------- 右：ステージ別 ---------- */}
-            <div style={{ position: 'relative', minHeight: 340 }}>
+            <div style={{ position: 'relative', minHeight: narrow ? 264 : 340 }}>
               {/* ===== ステージ0：上から順にタイプされて埋まる ===== */}
               <div
                 style={{
@@ -563,7 +647,7 @@ export const LandingSections: React.FC<LandingSectionsProps> = ({ onStart }) => 
                     </svg>
                   </span>
                   <span style={{ fontSize: 14, fontWeight: 500, color: '#BFB4AA' }}>
-                    この条件で、左の表を組みます
+                    この条件で、{narrow ? '上' : '左'}の表を組みます
                   </span>
                 </div>
               </div>
@@ -725,14 +809,14 @@ export const LandingSections: React.FC<LandingSectionsProps> = ({ onStart }) => 
 
           <p style={{ marginTop: 24, textAlign: 'center', fontSize: 13, color: '#A79A90' }}>
             {stage === 0 && 'いまは、ほとんどの枠を家族が担っています'}
-            {stage === 1 && '採用したぶんだけ、左の表の枠が色づきます'}
+            {stage === 1 && `採用したぶんだけ、${narrow ? '上' : '左'}の表の枠が色づきます`}
             {stage === 2 && '印のついた枠が、そのまま議題になります'}
           </p>
         </div>
       </section>
 
       {/* ============ フッターCTA ============ */}
-      <section style={{ textAlign: 'center', padding: '104px 32px 120px' }}>
+      <section style={{ textAlign: 'center', padding: 'clamp(52px,8vw,104px) clamp(16px,4vw,32px) clamp(64px,10vw,120px)' }}>
         <h2 className="font-display" style={{ fontSize: 'clamp(24px,3vw,34px)', fontWeight: 900, letterSpacing: '-0.03em' }}>
           1分で、はじめられます
         </h2>
