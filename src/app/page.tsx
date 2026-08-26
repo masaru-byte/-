@@ -332,6 +332,7 @@ export default function HomePage() {
                     selectedNeedIds={userInput.selectedNeeds}
                     householdType={userInput.householdType}
                     careLevel={userInput.careLevel}
+                    slots={currentSlots}
                   />
 
                   {/* ケアマネジャーへ渡す */}
