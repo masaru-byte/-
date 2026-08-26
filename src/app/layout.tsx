@@ -1,5 +1,4 @@
-import type { Metadata } from "next";
-import Script from "next/script";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -16,7 +15,12 @@ export const metadata: Metadata = {
     "介護離職防止",
     "自治体DX",
   ],
-  viewport: "width=device-width, initial-scale=1, maximum-scale=1",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#FFF7F2",
 };
 
 export default function RootLayout({
@@ -26,27 +30,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ja" className="h-full antialiased" suppressHydrationWarning>
-      <head>
-        {/*
-          描画前にテーマを確定させ、リロード時の白/黒のちらつきを防ぐ。
-          React が動くより前に実行する必要があるため、インラインで置いている。
-        */}
-        <Script
-          id="keashiru-theme"
-          strategy="beforeInteractive"
-          dangerouslySetInnerHTML={{
-            __html: `(function(){try{
-  var c = localStorage.getItem('keashiru-theme') || 'system';
-  var dark = c === 'dark' || (c === 'system' &&
-    window.matchMedia('(prefers-color-scheme: dark)').matches);
-  var r = document.documentElement;
-  r.setAttribute('data-theme', dark ? 'dark' : 'light');
-  r.dataset.themeChoice = c;
-}catch(e){}})();`,
-          }}
-        />
-      </head>
-      {/* 背景と文字色は globals.css のトークンが決める（テーマ切替のため） */}
+      <head />
+      {/* オレンジのブランド体験を保つため、公開画面はライトテーマに統一 */}
       <body className="min-h-full flex flex-col">
         {children}
       </body>

@@ -149,7 +149,7 @@ export const GovDashboard: React.FC = () => {
   const getSupplyColor = (count: number) => {
     if (count === 0) return 'bg-orange-700 text-white font-bold';
     const ratio = count / maxSupply;
-    if (ratio <= 0.15) return 'bg-orange-500 text-white font-bold';
+    if (ratio <= 0.15) return 'bg-orange-500 text-stone-900 font-bold';
     if (ratio <= 0.35) return 'bg-orange-200 text-orange-900 font-medium';
     if (ratio <= 0.6) return 'bg-orange-50 text-orange-800';
     return 'bg-stone-50 text-stone-500';
@@ -380,9 +380,9 @@ export const GovDashboard: React.FC = () => {
                         item.rank === 1
                           ? 'bg-rose-600 text-white'
                           : item.rank === 2
-                          ? 'bg-rose-500 text-white'
+                          ? 'bg-rose-600 text-white'
                           : item.rank === 3
-                          ? 'bg-amber-500 text-white'
+                          ? 'bg-amber-500 text-stone-900'
                           : 'bg-stone-400 text-white'
                       }`}
                     >

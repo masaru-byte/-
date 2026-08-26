@@ -8,10 +8,9 @@
 'use client';
 
 import React, { useMemo } from 'react';
-import { useReveal } from '@/hooks/useReveal';
 import { Service, TimelineSlot } from '@/types';
 import { SCHEME_LABELS } from '@/utils/colors';
-import { ExternalLink } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 
 interface ServicePlanListProps {
   slots: TimelineSlot[];
@@ -26,7 +25,6 @@ interface PlanRow {
 }
 
 export const ServicePlanList: React.FC<ServicePlanListProps> = ({ slots, onSelectSlot }) => {
-  const list = useReveal<HTMLUListElement>();
   const rows = useMemo<PlanRow[]>(() => {
     const map = new Map<string, PlanRow>();
     for (const slot of slots) {
@@ -52,81 +50,82 @@ export const ServicePlanList: React.FC<ServicePlanListProps> = ({ slots, onSelec
 
   if (rows.length === 0) {
     return (
-      <div className="glass rounded-xl border border-stone-200 p-6 text-center text-sm text-stone-500">
-        まだサービスが割り当てられていません。予算を上げるか、マス目から個別に選んでください。
+      <div className="rounded-[24px] border-2 border-[#2D231E] bg-[#FFF7F2] p-6 text-center text-[14px] font-semibold leading-relaxed text-[#756A64] shadow-[0_4px_0_#2D231E]">
+        まだサービスが割り当てられていません。
+        <br />
+        予算を上げるか、タイムラインのカードから個別に選んでください。
       </div>
     );
   }
 
   return (
-    <div className="glass rounded-xl border border-stone-200 overflow-hidden">
-      <div className="px-4 sm:px-5 py-3 border-b border-stone-200 flex items-baseline justify-between gap-3">
-        <h2 className="text-sm font-bold text-stone-900">
+    <section className="overflow-hidden rounded-[24px] border-2 border-[#2D231E] bg-white shadow-[0_4px_0_#2D231E]">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b-2 border-[#2D231E] bg-[#FFF4EC] px-4 py-4 sm:px-6">
+        <h2 className="text-[18px] font-extrabold text-[#2D231E]">
           このプランで使うサービス
-          <span className="ml-2 text-xs font-normal text-stone-500 tabular-nums">
+          <span className="ml-2 inline-flex min-h-8 items-center rounded-full border-2 border-[#2D231E] bg-white px-3 align-middle text-[13px] font-bold text-[#5E4D45] tabular-nums">
             {rows.length} 種類
           </span>
         </h2>
-        <span className="text-xs text-stone-500 shrink-0">
-          合計{' '}
-          <strong className="text-stone-900 tabular-nums">¥{total.toLocaleString()}</strong> /月
+        <span className="inline-flex min-h-10 shrink-0 items-center rounded-full border-2 border-[#2D231E] bg-[#ED6A2C] px-4 text-[13px] font-bold text-[#2D231E]">
+          合計&nbsp;
+          <strong className="text-[16px] font-extrabold tabular-nums">¥{Math.round(total).toLocaleString()}</strong>
+          &nbsp;/月
         </span>
       </div>
 
-      <ul
-        {...list.containerProps}
-        className={`divide-y divide-stone-100 ${list.containerProps.className ?? ''}`}
-      >
-        {rows.map((row, i) => {
+      <ul className="space-y-3 p-3 sm:p-4">
+        {rows.map((row) => {
           const scheme = SCHEME_LABELS[row.service.scheme];
           return (
             <li
               key={row.service.id}
-              {...list.item(i)}
-              style={{ ...list.item(i).style, ['--rv-y' as string]: '8px', ['--rv-step' as string]: 'var(--stag-base)', ['--rv-dur' as string]: 'var(--dur-base)' }}
-              className={list.item(i).className}
+              className="rounded-[20px] border-2 border-[#2D231E] bg-white transition-colors hover:bg-[#FFF7F2]"
             >
               <button
                 type="button"
                 onClick={() => onSelectSlot(row.firstSlot)}
-                className="press w-full text-left px-4 sm:px-5 py-3.5 hover:bg-stone-50 transition-colors flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4"
+                aria-label={`${row.service.name}の詳しい内容を見る`}
+                className="press flex min-h-[132px] w-full flex-col gap-4 rounded-[18px] px-4 py-4 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B94716] sm:min-h-[116px] sm:flex-row sm:items-center sm:px-5"
               >
                 <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2 mb-1">
+                  <div className="mb-2 flex flex-wrap items-center gap-2">
                     <span
-                      className={`text-[11px] font-bold px-1.5 py-0.5 rounded-md border shrink-0 ${scheme.badgeColor}`}
+                      className="inline-flex min-h-8 shrink-0 items-center rounded-full border-2 border-[#2D231E] bg-[#FDE8DC] px-3 text-[13px] font-extrabold text-[#7B2D0E]"
                     >
                       {scheme.label}
                     </span>
-                    <span className="text-[11px] text-stone-500 truncate">
+                    <span className="min-w-0 truncate text-[13px] font-semibold text-[#756A64]">
                       {row.service.providerName}
                     </span>
                   </div>
-                  <div className="text-sm font-bold text-stone-900 leading-snug">
+                  <div className="text-[17px] font-extrabold leading-snug text-[#2D231E]">
                     {row.service.name}
                   </div>
+                  {row.service.description && (
+                    <p className="mt-2 line-clamp-2 text-[13px] font-medium leading-relaxed text-[#756A64]">
+                      {row.service.description}
+                    </p>
+                  )}
                 </div>
 
-                <div className="flex items-center gap-4 sm:gap-6 shrink-0">
-                  <div className="text-right">
-                    <div className="text-[11px] text-stone-500">週の回数</div>
-                    <div className="text-sm font-bold text-stone-900 tabular-nums">
-                      {row.timesPerWeek} 回
-                    </div>
-                  </div>
-                  <div className="text-right min-w-[76px]">
-                    <div className="text-[11px] text-stone-500">月あたり</div>
-                    <div className="text-sm font-bold text-stone-900 tabular-nums">
-                      {row.monthlyCost > 0 ? `¥${Math.round(row.monthlyCost).toLocaleString()}` : '無料'}
-                    </div>
-                  </div>
-                  <ExternalLink className="w-4 h-4 text-stone-300 hidden sm:block" />
+                <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto sm:max-w-[360px] sm:justify-end">
+                  <span className="inline-flex min-h-10 items-center rounded-full border-2 border-[#D9C9C0] bg-[#FFF7F2] px-3 text-[13px] font-bold text-[#5E4D45] tabular-nums">
+                    週 {row.timesPerWeek} 回
+                  </span>
+                  <span className="inline-flex min-h-10 items-center rounded-full border-2 border-[#ED6A2C] bg-white px-3 text-[13px] font-extrabold text-[#9D3D12] tabular-nums">
+                    月 {row.monthlyCost > 0 ? `¥${Math.round(row.monthlyCost).toLocaleString()}` : '無料'}
+                  </span>
+                  <span className="ml-auto inline-flex min-h-11 items-center gap-1.5 rounded-full bg-[#C4511A] px-4 text-[13px] font-extrabold text-white sm:ml-0">
+                    詳しく見る
+                    <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                  </span>
                 </div>
               </button>
             </li>
           );
         })}
       </ul>
-    </div>
+    </section>
   );
 };

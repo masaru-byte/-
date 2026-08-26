@@ -10,7 +10,7 @@
 import React, { useState } from 'react';
 import { RESTRICTION_RULES } from '@/constants/careConstants';
 import { CareLevel, HouseholdType } from '@/types';
-import { ChevronDown, HelpCircle, AlertCircle, Info, CheckCircle2, XCircle } from 'lucide-react';
+import { ChevronDown, HelpCircle, AlertCircle } from 'lucide-react';
 
 interface RestrictionGuideProps {
   selectedNeedIds: string[];
@@ -21,7 +21,6 @@ interface RestrictionGuideProps {
 export const RestrictionGuide: React.FC<RestrictionGuideProps> = ({
   selectedNeedIds,
   householdType,
-  careLevel,
 }) => {
   // 選択された困りごとに関連する境界ルールを抽出
   const [isOpen, setIsOpen] = useState(false);
@@ -31,40 +30,48 @@ export const RestrictionGuide: React.FC<RestrictionGuideProps> = ({
   );
 
   return (
-    <div className="glass rounded-xl border border-stone-200">
+    <div className="overflow-hidden rounded-[24px] border-2 border-[#2D231E] bg-white">
       <button
         type="button"
         onClick={() => setIsOpen((v) => !v)}
         aria-expanded={isOpen}
-        className="w-full px-4 sm:px-5 py-3.5 flex items-center gap-2.5 cursor-pointer select-none hover:bg-stone-50 rounded-xl transition-colors text-left">
-        <HelpCircle className="w-4 h-4 text-stone-400 shrink-0" />
-        <span className="text-sm font-bold text-stone-900 flex-1 min-w-0">
+        aria-controls="restriction-guide-details"
+        className="flex min-h-14 w-full cursor-pointer select-none items-center gap-3 px-4 py-3.5 text-left transition-colors hover:bg-[#FFF7F2] sm:px-5">
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#FDE8DC]">
+          <HelpCircle className="h-5 w-5 text-[#B94716]" />
+        </span>
+        <span className="min-w-0 flex-1 text-sm font-bold text-[#2D231E] sm:text-base">
           保険でできること／自費になること
         </span>
-        <span className="text-xs text-stone-400 shrink-0 tabular-nums">
+        <span className="shrink-0 rounded-full bg-[#FDE8DC] px-2.5 py-1 text-sm font-bold text-[#9D3D12] tabular-nums">
           {activeRules.length} 件
         </span>
         <ChevronDown
-          className={`w-4 h-4 text-stone-400 shrink-0 transition-transform duration-300 ${
+          className={`h-5 w-5 shrink-0 text-[#756A64] transition-transform duration-300 ${
             isOpen ? 'rotate-180' : ''
           }`}
         />
       </button>
 
-      <div className="collapse" data-open={isOpen ? 'true' : 'false'}>
+      <div
+        id="restriction-guide-details"
+        className="disclosure-collapse"
+        data-open={isOpen ? 'true' : 'false'}
+        hidden={!isOpen}
+      >
         <div>
-      <div className="px-4 sm:px-5 pb-5 pt-1 space-y-4 border-t border-stone-100">
-        <p className="text-xs text-stone-500">
+      <div className="space-y-4 border-t-2 border-[#FDE8DC] px-4 pb-5 pt-4 sm:px-5">
+        <p className="text-sm leading-relaxed text-[#756A64]">
           ケアマネジャーや自治体への相談時に役立つ「保険適用の可否」と「自費サービスの活用ポイント」です。
         </p>
 
       {/* 世帯状況に応じた特記事項 */}
       {householdType === 'living_together' && (
-        <div className="p-4 rounded-lg bg-amber-50/80 border border-amber-200/80 flex items-start space-x-3 text-xs text-amber-900">
-          <AlertCircle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+        <div className="flex items-start gap-3 rounded-[20px] border-2 border-[#B94716] bg-[#FFF7F2] p-4 text-sm text-[#2D231E]">
+          <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-[#B94716]" />
           <div className="space-y-1">
             <span className="font-bold">同居家族がいらっしゃる場合の注意点</span>
-            <p className="leading-relaxed text-amber-800">
+            <p className="leading-relaxed text-[#5E514A]">
               同居家族がいる世帯では、原則として介護保険の「生活援助（掃除・洗濯・調理・買い物）」は算定できません。家族の就労や疾病等による「やむを得ない事情」の認定が必要となります。そのため、<strong>シルバー人材センター（1時間約1,350円）</strong>や<strong>民間家事代行（自費）</strong>の組み合わせが大変有効です。
             </p>
           </div>
@@ -77,17 +84,17 @@ export const RestrictionGuide: React.FC<RestrictionGuideProps> = ({
           return (
             <div
               key={rule.id}
-              className="p-4 rounded-lg border border-stone-200 bg-stone-50/50 space-y-2.5"
+              className="space-y-3 rounded-[20px] border-2 border-[#2D231E] bg-white p-4"
             >
               <div className="flex items-start justify-between gap-2">
-                <div className="font-bold text-xs text-stone-900">{rule.title}</div>
+                <div className="text-sm font-bold leading-relaxed text-[#2D231E]">{rule.title}</div>
                 <span
-                  className={`text-[11px] font-bold px-2 py-0.5 rounded-full shrink-0 ${
+                  className={`shrink-0 rounded-full border-2 px-2.5 py-1 text-[13px] font-bold ${
                     rule.isCovered === 'covered'
-                      ? 'bg-emerald-100 text-emerald-800'
+                      ? 'border-[#ED6A2C] bg-[#FDE8DC] text-[#9D3D12]'
                       : rule.isCovered === 'conditional'
-                      ? 'bg-amber-100 text-amber-800'
-                      : 'bg-rose-100 text-rose-800'
+                      ? 'border-[#B94716] bg-white text-[#B94716]'
+                      : 'border-[#2D231E] bg-[#2D231E] text-white'
                   }`}
                 >
                   {rule.isCovered === 'covered' && '保険適用可能'}
@@ -96,15 +103,15 @@ export const RestrictionGuide: React.FC<RestrictionGuideProps> = ({
                 </span>
               </div>
 
-              <p className="text-xs text-stone-600 leading-relaxed font-medium">
+              <p className="text-sm font-medium leading-relaxed text-[#5E514A]">
                 {rule.conditionText}
               </p>
 
-              <div className="text-[11px] text-stone-500 glass p-2.5 rounded-xl border border-stone-100 leading-relaxed">
+              <div className="rounded-2xl border border-[#ED6A2C] bg-[#FFF7F2] p-3 text-sm leading-relaxed text-[#5E514A]">
                 💡 {rule.explanation}
               </div>
 
-              <div className="text-[11px] text-stone-400 font-mono">
+              <div className="text-[13px] leading-relaxed text-[#756A64]">
                 根拠: {rule.officialSource}
               </div>
             </div>
@@ -112,7 +119,7 @@ export const RestrictionGuide: React.FC<RestrictionGuideProps> = ({
         })}
       </div>
 
-      <div className="text-[11px] text-stone-500 italic bg-stone-50 p-3 rounded-xl border border-stone-100">
+      <div className="rounded-2xl border border-dashed border-[#B94716] bg-[#FFF7F2] p-3 text-sm italic leading-relaxed text-[#756A64]">
         ※ 実際のサービス利用可否や給付算定については、市区町村の地域包括支援センターまたは担当ケアマネジャーにご確認ください。
       </div>
       </div>

@@ -273,22 +273,22 @@ export const InputWizard: React.FC<InputWizardProps> = ({
   ];
 
   return (
-    <div className="glass rounded-xl border border-stone-200 overflow-hidden max-w-3xl mx-auto my-6">
+    <div className="bg-white rounded-[24px] border-2 border-[#2D231E] overflow-hidden max-w-3xl mx-auto my-6 shadow-[4px_4px_0_#2D231E]">
       {/* ヘッダー */}
-      <div className="px-6 py-5 border-b border-stone-200">
+      <div className="px-5 sm:px-7 py-5 sm:py-6 border-b-2 border-[#2D231E] bg-white">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <span className="text-xs font-semibold text-orange-700 tracking-wide">
+            <span className="text-[13px] font-bold text-[#B94716] tracking-wide">
               ステップ {currentStep} / 5
             </span>
-            <h2 key={currentStep} className="text-xl font-bold mt-0.5 text-stone-900 swap swap-tight">
+            <h2 key={currentStep} className="text-2xl font-bold mt-1 text-[#2D231E] swap swap-tight">
               {STEP_TITLES[currentStep - 1]}
             </h2>
           </div>
           <button
             onClick={onLoadDemo}
             type="button"
-            className="shrink-0 px-3 py-1.5 rounded-lg border border-stone-300 text-stone-600 hover:bg-stone-50 text-xs font-medium transition-colors"
+            className="shrink-0 min-h-11 px-4 py-2 rounded-full border-2 border-[#2D231E] bg-[#FFF9F3] text-[#2D231E] hover:bg-[#FDE8DC] text-[13px] font-bold transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#9D3D12]"
           >
             入力例を読み込む
           </button>
@@ -296,7 +296,7 @@ export const InputWizard: React.FC<InputWizardProps> = ({
 
         {/* ステップ進捗（5分割セグメント） */}
         <div
-          className="flex gap-1.5 mt-4"
+          className="flex gap-2 mt-5"
           role="progressbar"
           aria-valuemin={1}
           aria-valuemax={5}
@@ -306,8 +306,8 @@ export const InputWizard: React.FC<InputWizardProps> = ({
           {[1, 2, 3, 4, 5].map((step) => (
             <div
               key={step}
-              className={`h-1.5 flex-1 rounded-full transition-colors duration-300 ${
-                step <= currentStep ? 'bg-orange-600' : 'bg-stone-200'
+              className={`h-2 flex-1 rounded-full transition-colors duration-300 ${
+                step <= currentStep ? 'bg-[#ED6A2C]' : 'bg-[#F3E7DE]'
               }`}
             />
           ))}
@@ -316,12 +316,12 @@ export const InputWizard: React.FC<InputWizardProps> = ({
 
       <div
         key={currentStep}
-        className={`p-6 sm:p-7 min-h-[360px] swap ${direction === 'fwd' ? 'swap-fwd' : 'swap-back'}`}
+        className={`p-5 sm:p-7 md:p-8 min-h-[360px] bg-white swap ${direction === 'fwd' ? 'swap-fwd' : 'swap-back'}`}
       >
         {/* ---------------- Step 1: 要介護度 ---------------- */}
         {currentStep === 1 && (
           <div className="space-y-5">
-            <p className="text-sm text-stone-600">
+            <p className="text-[15px] leading-relaxed text-[#756A64]">
               ご本人が受けている介護認定を選んでください。まだ申請していない場合も選べます。
             </p>
 
@@ -329,9 +329,9 @@ export const InputWizard: React.FC<InputWizardProps> = ({
               {CARE_LEVEL_GROUPS.map((group) => (
                 <div key={group.label}>
                   <div className="flex items-baseline gap-2 mb-2">
-                    <span className="text-xs font-bold text-stone-700">{group.label}</span>
+                    <span className="text-sm font-bold text-[#2D231E]">{group.label}</span>
                     {group.note && (
-                      <span className="text-[11px] text-stone-400">{group.note}</span>
+                      <span className="text-[13px] text-[#756A64]">{group.note}</span>
                     )}
                   </div>
                   <div className="flex flex-wrap gap-2">
@@ -343,13 +343,13 @@ export const InputWizard: React.FC<InputWizardProps> = ({
                           type="button"
                           onClick={() => handleCareLevelChange(level)}
                           aria-pressed={isSelected}
-                          className={`press inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg border text-sm transition-colors ${
+                          className={`press inline-flex min-h-11 items-center gap-1.5 px-4 py-2.5 rounded-xl border-2 text-sm leading-tight transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#9D3D12] ${
                             isSelected
-                              ? 'border-orange-600 bg-orange-50 text-orange-900 font-bold'
-                              : 'border-stone-300 text-stone-700 hover:bg-stone-50 font-medium'
+                              ? 'border-[#2D231E] bg-[#ED6A2C] text-[#2D231E] font-bold'
+                              : 'border-[#2D231E] bg-[#FFF9F3] text-[#2D231E] hover:bg-[#FDE8DC] font-semibold'
                           }`}
                         >
-                          {isSelected && <Check className="w-4 h-4 text-orange-600" />}
+                          {isSelected && <Check className="w-4 h-4 text-[#2D231E]" />}
                           {CARE_LEVEL_SHORT[level]}
                         </button>
                       );
@@ -360,7 +360,7 @@ export const InputWizard: React.FC<InputWizardProps> = ({
             </div>
 
             {/* 選択中の区分の説明のみを1行で表示 */}
-            <div className="p-3.5 rounded-lg bg-stone-50 border border-stone-200 text-xs text-stone-600 leading-relaxed">
+            <div className="p-4 rounded-xl bg-[#FFF7F2] border-2 border-[#DCC8BB] text-sm text-[#756A64] leading-relaxed">
               {CARE_LEVEL_LIMITS[formData.careLevel].description}
             </div>
           </div>
@@ -369,7 +369,7 @@ export const InputWizard: React.FC<InputWizardProps> = ({
         {/* ---------------- Step 2: 世帯状況 ---------------- */}
         {currentStep === 2 && (
           <div className="space-y-4">
-            <p className="text-sm text-stone-600">
+            <p className="text-[15px] leading-relaxed text-[#756A64]">
               同居家族の有無で、介護保険の生活援助が使えるかどうかが変わります。
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -382,29 +382,31 @@ export const InputWizard: React.FC<InputWizardProps> = ({
                     type="button"
                     onClick={() => handleHouseholdChange(item.id)}
                     aria-pressed={isSelected}
-                    className={`press text-left p-4 rounded-lg border transition-colors flex items-start gap-3 ${
+                    className={`press min-h-[116px] text-left p-4 rounded-2xl border-2 transition-colors flex items-start gap-3 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#9D3D12] ${
                       isSelected
-                        ? 'border-orange-600 bg-orange-50'
-                        : 'border-stone-300 hover:bg-stone-50'
+                        ? 'border-[#2D231E] bg-[#ED6A2C]'
+                        : 'border-[#2D231E] bg-[#FFF9F3] hover:bg-[#FDE8DC]'
                     }`}
                   >
                     <Icon
                       className={`w-5 h-5 mt-0.5 shrink-0 ${
-                        isSelected ? 'text-orange-600' : 'text-stone-400'
+                        isSelected ? 'text-[#2D231E]' : 'text-[#B94716]'
                       }`}
                     />
                     <span>
                       <span className="flex items-center gap-1.5">
                         <span
                           className={`font-bold text-sm ${
-                            isSelected ? 'text-orange-900' : 'text-stone-900'
+                            isSelected ? 'text-[#2D231E]' : 'text-[#2D231E]'
                           }`}
                         >
                           {item.title}
                         </span>
-                        {isSelected && <Check className="w-4 h-4 text-orange-600" />}
+                        {isSelected && <Check className="w-4 h-4 text-[#2D231E]" />}
                       </span>
-                      <span className="block text-xs text-stone-600 leading-relaxed mt-1">
+                      <span className={`block text-[13px] leading-relaxed mt-1 ${
+                        isSelected ? 'text-[#2D231E]/80' : 'text-[#756A64]'
+                      }`}>
                         {item.desc}
                       </span>
                     </span>
@@ -419,10 +421,10 @@ export const InputWizard: React.FC<InputWizardProps> = ({
         {currentStep === 3 && (
           <div className="space-y-4">
             <div className="flex items-baseline justify-between gap-3">
-              <p className="text-sm text-stone-600">
+              <p className="text-[15px] leading-relaxed text-[#756A64]">
                 負担に感じていることを選んでください（複数可）。
               </p>
-              <span className="shrink-0 text-xs font-bold text-orange-800 tabular-nums">
+              <span className="shrink-0 text-[13px] font-bold text-[#B94716] tabular-nums">
                 {formData.selectedNeeds.length} 件選択中
               </span>
             </div>
@@ -437,11 +439,11 @@ export const InputWizard: React.FC<InputWizardProps> = ({
 
                 return (
                   <div key={cat.key}>
-                    <div className="flex items-baseline gap-2 mb-2 pb-1.5 border-b border-stone-200">
-                      <span className="text-xs font-bold text-stone-800">{cat.label}</span>
-                      <span className="text-[11px] text-stone-400">{cat.hint}</span>
+                    <div className="flex items-baseline gap-2 mb-2 pb-2 border-b-2 border-[#F3E7DE]">
+                      <span className="text-sm font-bold text-[#2D231E]">{cat.label}</span>
+                      <span className="text-[13px] text-[#756A64]">{cat.hint}</span>
                       {selectedCount > 0 && (
-                        <span className="ml-auto text-[11px] font-bold text-orange-700 tabular-nums">
+                        <span className="ml-auto text-[13px] font-bold text-[#B94716] tabular-nums">
                           {selectedCount}
                         </span>
                       )}
@@ -456,13 +458,13 @@ export const InputWizard: React.FC<InputWizardProps> = ({
                             title={tag.description}
                             onClick={() => toggleNeed(tag.id)}
                             aria-pressed={isSelected}
-                            className={`press-sm inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border text-xs transition-colors ${
+                            className={`press-sm inline-flex min-h-11 items-center gap-1.5 px-3.5 py-2.5 rounded-xl border-2 text-sm transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#9D3D12] ${
                               isSelected
-                                ? 'border-orange-600 bg-orange-50 text-orange-900 font-bold'
-                                : 'border-stone-300 text-stone-700 hover:bg-stone-50'
+                                ? 'border-[#2D231E] bg-[#ED6A2C] text-[#2D231E] font-bold'
+                                : 'border-[#2D231E] bg-[#FFF9F3] text-[#2D231E] hover:bg-[#FDE8DC] font-semibold'
                             }`}
                           >
-                            {isSelected && <Check className="w-3.5 h-3.5 text-orange-600" />}
+                            {isSelected && <Check className="w-4 h-4 text-[#2D231E]" />}
                             {tag.name}
                           </button>
                         );
@@ -478,12 +480,12 @@ export const InputWizard: React.FC<InputWizardProps> = ({
         {/* ---------------- Step 4: タスクごとの発生タイミング ---------------- */}
         {currentStep === 4 && (
           <div className="space-y-4">
-            <p className="text-sm text-stone-600">
+            <p className="text-[15px] leading-relaxed text-[#756A64]">
               困りごとごとに、発生する曜日と時間帯を選んでください。次の画面で、この予定にサービスを自動で当てはめた結果が表示されます。
             </p>
 
             {formData.selectedNeeds.length === 0 ? (
-              <div className="p-6 rounded-lg border border-dashed border-stone-300 text-center text-sm text-stone-500">
+              <div className="p-6 rounded-2xl border-2 border-dashed border-[#2D231E] bg-[#FFF9F3] text-center text-sm text-[#756A64]">
                 困りごとがまだ選ばれていません。「戻る」から選択してください。
               </div>
             ) : (
@@ -508,62 +510,65 @@ export const InputWizard: React.FC<InputWizardProps> = ({
                   return (
                     <div
                       key={needId}
-                      className="rounded-lg border border-stone-200 overflow-hidden"
+                      className="rounded-2xl border-2 border-[#2D231E] overflow-hidden"
                     >
-                      <div className="px-3.5 py-2.5 bg-stone-50 border-b border-stone-200 flex items-center justify-between gap-3">
-                        <span className="text-sm font-bold text-stone-900 truncate">
+                      <div className="px-4 py-3 bg-[#FFF7F2] border-b-2 border-[#2D231E] flex items-center justify-between gap-3">
+                        <span className="text-[15px] font-bold text-[#2D231E] truncate">
                           {tag.name}
                         </span>
                         <span
                           key={actual}
-                          className={`swap swap-tight shrink-0 text-[11px] font-bold px-2 py-0.5 rounded-full tabular-nums ${
+                          className={`swap swap-tight shrink-0 text-[13px] font-bold px-2.5 py-1 rounded-full tabular-nums ${
                             actual > 0
-                              ? 'bg-orange-50 text-orange-800 border border-orange-200'
-                              : 'bg-stone-100 text-stone-500 border border-stone-200'
+                              ? 'bg-[#FDE8DC] text-[#9D3D12] border-2 border-[#B94716]'
+                              : 'bg-[#EEE9E5] text-[#756A64] border-2 border-[#756A64]'
                           }`}
                         >
                           週 {actual} コマ
                         </span>
                       </div>
 
-                      <div className="px-3.5 py-3 space-y-2.5">
+                      <div className="px-4 py-4 space-y-3.5">
                         {/* 曜日 */}
                         <div className="flex flex-wrap items-center gap-1.5">
-                          <span className="text-[11px] text-stone-500 w-12 shrink-0">曜日</span>
+                          <span className="text-[13px] font-semibold text-[#756A64] w-12 shrink-0">曜日</span>
                           <button
                             type="button"
+                            aria-pressed={isEveryDay}
                             onClick={() => setTaskDays(needId, ALL_DAYS)}
-                            className={`px-2 py-1 rounded-md border text-[11px] font-bold transition-colors ${
+                            className={`min-h-11 px-3 py-2 rounded-lg border-2 text-[13px] font-bold transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#9D3D12] ${
                               isEveryDay
-                                ? 'border-orange-600 bg-orange-50 text-orange-800'
-                                : 'border-stone-300 text-stone-600 hover:bg-stone-50'
+                                ? 'border-[#2D231E] bg-[#ED6A2C] text-[#2D231E]'
+                                : 'border-[#2D231E] bg-[#FFF9F3] text-[#2D231E] hover:bg-[#FDE8DC]'
                             }`}
                           >
                             毎日
                           </button>
                           <button
                             type="button"
+                            aria-pressed={isWeekdays}
                             onClick={() => setTaskDays(needId, WEEKDAYS)}
-                            className={`px-2 py-1 rounded-md border text-[11px] font-bold transition-colors ${
+                            className={`min-h-11 px-3 py-2 rounded-lg border-2 text-[13px] font-bold transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#9D3D12] ${
                               isWeekdays
-                                ? 'border-orange-600 bg-orange-50 text-orange-800'
-                                : 'border-stone-300 text-stone-600 hover:bg-stone-50'
+                                ? 'border-[#2D231E] bg-[#ED6A2C] text-[#2D231E]'
+                                : 'border-[#2D231E] bg-[#FFF9F3] text-[#2D231E] hover:bg-[#FDE8DC]'
                             }`}
                           >
                             平日
                           </button>
                           <button
                             type="button"
+                            aria-pressed={isWeekend}
                             onClick={() => setTaskDays(needId, WEEKEND)}
-                            className={`px-2 py-1 rounded-md border text-[11px] font-bold transition-colors ${
+                            className={`min-h-11 px-3 py-2 rounded-lg border-2 text-[13px] font-bold transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#9D3D12] ${
                               isWeekend
-                                ? 'border-orange-600 bg-orange-50 text-orange-800'
-                                : 'border-stone-300 text-stone-600 hover:bg-stone-50'
+                                ? 'border-[#2D231E] bg-[#ED6A2C] text-[#2D231E]'
+                                : 'border-[#2D231E] bg-[#FFF9F3] text-[#2D231E] hover:bg-[#FDE8DC]'
                             }`}
                           >
                             土日
                           </button>
-                          <span className="w-px h-4 bg-stone-200 mx-0.5" />
+                          <span className="w-px h-6 bg-[#DCC8BB] mx-0.5" />
                           {DAYS_OF_WEEK.map((d) => {
                             const on = timing.days.includes(d.key);
                             return (
@@ -573,10 +578,10 @@ export const InputWizard: React.FC<InputWizardProps> = ({
                                 aria-pressed={on}
                                 aria-label={d.label}
                                 onClick={() => toggleTaskDay(needId, d.key)}
-                                className={`press-sm w-7 h-7 rounded-md border text-[11px] font-bold transition-colors ${
+                                className={`press-sm w-11 h-11 rounded-lg border-2 text-[13px] font-bold transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#9D3D12] ${
                                   on
-                                    ? 'border-orange-600 bg-orange-600 text-white'
-                                    : 'border-stone-300 text-stone-600 hover:bg-stone-50'
+                                    ? 'border-[#2D231E] bg-[#ED6A2C] text-[#2D231E]'
+                                    : 'border-[#2D231E] bg-[#FFF9F3] text-[#2D231E] hover:bg-[#FDE8DC]'
                                 }`}
                               >
                                 {d.shortLabel}
@@ -587,7 +592,7 @@ export const InputWizard: React.FC<InputWizardProps> = ({
 
                         {/* 時間帯 */}
                         <div className="flex flex-wrap items-center gap-1.5">
-                          <span className="text-[11px] text-stone-500 w-12 shrink-0">時間帯</span>
+                          <span className="text-[13px] font-semibold text-[#756A64] w-12 shrink-0">時間帯</span>
                           {TIME_PERIODS.map((tp) => {
                             const on = timing.periods.includes(tp.key);
                             return (
@@ -596,14 +601,14 @@ export const InputWizard: React.FC<InputWizardProps> = ({
                                 type="button"
                                 aria-pressed={on}
                                 onClick={() => toggleTaskPeriod(needId, tp.key)}
-                                className={`press-sm px-2.5 py-1 rounded-md border text-[11px] font-bold transition-colors ${
+                                className={`press-sm min-h-11 px-3 py-2 rounded-lg border-2 text-[13px] font-bold transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#9D3D12] ${
                                   on
-                                    ? 'border-orange-600 bg-orange-50 text-orange-800'
-                                    : 'border-stone-300 text-stone-600 hover:bg-stone-50'
+                                    ? 'border-[#2D231E] bg-[#ED6A2C] text-[#2D231E]'
+                                    : 'border-[#2D231E] bg-[#FFF9F3] text-[#2D231E] hover:bg-[#FDE8DC]'
                                 }`}
                               >
                                 {tp.label}
-                                <span className="ml-1 font-normal text-[11px] opacity-70">
+                                <span className="ml-1 font-normal text-[13px] opacity-80">
                                   {tp.timeRange}
                                 </span>
                               </button>
@@ -612,7 +617,7 @@ export const InputWizard: React.FC<InputWizardProps> = ({
                         </div>
 
                         {takenByOthers > 0 && (
-                          <p className="text-[11px] text-amber-700">
+                          <p className="text-[13px] leading-relaxed text-[#9A571B]">
                             選んだ {requested} コマのうち {takenByOthers} コマは、他の困りごとと重なっているためそちらが優先されています。
                           </p>
                         )}
@@ -623,11 +628,11 @@ export const InputWizard: React.FC<InputWizardProps> = ({
               </div>
             )}
 
-            <div className="flex items-center gap-2 p-3 rounded-lg bg-stone-50 border border-stone-200 text-xs text-stone-600">
-              <CalendarDays className="w-4 h-4 text-stone-400 shrink-0" />
+            <div className="flex items-center gap-2.5 p-4 rounded-xl bg-[#FFF7F2] border-2 border-[#DCC8BB] text-sm text-[#756A64]">
+              <CalendarDays className="w-5 h-5 text-[#B94716] shrink-0" />
               <span>
                 1週間で
-                <strong className="text-stone-900 tabular-nums mx-1">
+                <strong className="text-[#2D231E] tabular-nums mx-1">
                   {Object.values(formData.slotNeeds).filter(Boolean).length}
                 </strong>
                 コマの困りごとが登録されています（最大28コマ）。同じ枠が重なった場合は、あとから選んだ困りごとが優先されます。
@@ -639,14 +644,14 @@ export const InputWizard: React.FC<InputWizardProps> = ({
         {/* ---------------- Step 5: 予算 ---------------- */}
         {currentStep === 5 && (
           <div className="space-y-5">
-            <p className="text-sm text-stone-600">
+            <p className="text-[15px] leading-relaxed text-[#756A64]">
               保険外サービス（自費・シルバー人材・互助）に月々出せる上限を設定してください。
             </p>
-            <div className="bg-stone-50 p-6 rounded-lg border border-stone-200 text-center space-y-4">
-              <span className="text-xs font-semibold text-stone-500">月額の自己負担 上限</span>
-              <div className="text-4xl font-bold text-orange-700 tabular-nums">
+            <div className="bg-[#FFF9F3] p-6 rounded-2xl border-2 border-[#2D231E] text-center space-y-4">
+              <span className="text-sm font-semibold text-[#756A64]">月額の自己負担 上限</span>
+              <div className="text-4xl font-bold text-[#B94716] tabular-nums">
                 {formData.monthlyBudget.toLocaleString()}
-                <span className="text-lg font-normal text-stone-600 ml-1">円 / 月</span>
+                <span className="text-lg font-normal text-[#756A64] ml-1">円 / 月</span>
               </div>
 
               <input
@@ -658,10 +663,10 @@ export const InputWizard: React.FC<InputWizardProps> = ({
                 value={formData.monthlyBudget}
                 onChange={(e) => handleBudgetChange(Number(e.target.value))}
                 style={{ '--range-progress': `${(formData.monthlyBudget / 200000) * 100}%` } as React.CSSProperties}
-                className="w-full h-6 cursor-pointer"
+                className="w-full h-11 cursor-pointer"
               />
 
-              <div className="flex justify-between text-[11px] text-stone-400 font-medium tabular-nums">
+              <div className="flex justify-between text-[13px] text-[#756A64] font-medium tabular-nums">
                 <span>0円</span>
                 <span>5万円</span>
                 <span>10万円</span>
@@ -670,7 +675,7 @@ export const InputWizard: React.FC<InputWizardProps> = ({
               </div>
             </div>
 
-            <div className="p-4 rounded-lg bg-orange-50 border border-orange-200 text-xs text-orange-900 leading-relaxed">
+            <div className="p-4 rounded-xl bg-[#FDE8DC] border-2 border-[#B94716] text-sm text-[#2D231E] leading-relaxed">
               <strong>0円でも大丈夫です。</strong>{' '}
               地域のボランティア、社協のサロン、自治体の助成（おむつ支給など）だけで組める案も探します。
             </div>
@@ -679,26 +684,26 @@ export const InputWizard: React.FC<InputWizardProps> = ({
       </div>
 
       {/* フッター */}
-      <div className="bg-stone-50 border-t border-stone-200 px-6 py-4 flex items-center justify-between">
+      <div className="bg-[#FFF7F2] border-t-2 border-[#2D231E] px-5 sm:px-7 py-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
         <button
           type="button"
           onClick={prevStep}
           disabled={currentStep === 1}
-          className={`flex items-center gap-1 px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
+          className={`min-h-11 flex items-center justify-center gap-1 px-4 py-2 rounded-xl text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#9D3D12] ${
             currentStep === 1
-              ? 'text-stone-300 cursor-not-allowed'
-              : 'text-stone-700 hover:bg-stone-200'
+              ? 'text-[#B7AAA2] cursor-not-allowed'
+              : 'text-[#2D231E] hover:bg-[#FDE8DC]'
           }`}
         >
           <ChevronLeft className="w-4 h-4" />
           戻る
         </button>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
           <button
             type="button"
             onClick={() => onSubmit(formData)}
-            className="text-xs text-stone-500 hover:text-stone-800 underline"
+            className="min-h-11 px-3 text-[13px] font-semibold text-[#756A64] hover:text-[#2D231E] underline rounded-lg focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#9D3D12]"
           >
             入力を省略して結果を見る
           </button>
@@ -706,7 +711,7 @@ export const InputWizard: React.FC<InputWizardProps> = ({
           <button
             type="button"
             onClick={nextStep}
-            className="press lift flex items-center gap-1.5 px-6 py-2.5 rounded-lg bg-orange-600 hover:bg-orange-700 text-white font-bold text-sm transition-colors"
+            className="press lift min-h-12 flex items-center justify-center gap-1.5 px-6 py-2.5 rounded-xl border-2 border-[#2D231E] bg-[#C4511A] hover:bg-[#9D3D12] text-white font-bold text-sm transition-colors shadow-[2px_2px_0_#2D231E] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#9D3D12]"
           >
             {currentStep === 5 ? 'サービスを当てはめる' : '次へ'}
             <ChevronRight className="w-4 h-4" />

@@ -43,7 +43,7 @@ import {
   optimizeTimeline,
   calculateMetrics,
 } from '@/utils/timelineEngine';
-import { Share2, Printer, Edit3, HelpCircle } from 'lucide-react';
+import { Share2, Printer, Edit3, HelpCircle, Clock3, ArrowRight } from 'lucide-react';
 
 /** 入力条件と予算から、サービスを当てはめ済みのタイムラインを組み立てる */
 function buildOptimizedSlots(input: UserInputData, budget: number): TimelineSlot[] {
@@ -254,55 +254,87 @@ export default function HomePage() {
                 /* ---------------- ランディング（初回訪問） ---------------- */
                 <section
                   {...landing.containerProps}
-                  className={`max-w-2xl mx-auto text-center pt-14 sm:pt-20 pb-10 ${landing.containerProps.className ?? ''}`}
+                  className={`max-w-5xl mx-auto pt-10 sm:pt-16 pb-12 ${landing.containerProps.className ?? ''}`}
                 >
-                  <h1 className="text-3xl sm:text-4xl font-bold text-stone-900 leading-snug">
-                    <span
-                      {...landing.item(0)}
-                      className={`inline-block ${landing.item(0).className}`}
-                      style={{ ...landing.item(0).style, ['--rv-y' as string]: '16px', ['--rv-blur' as string]: '2.5px', ['--rv-delay' as string]: '120ms' }}
-                    >
-                      介護に使っている時間、
-                    </span>
-                    <span
-                      {...landing.item(1)}
-                      className={`inline-block ${landing.item(1).className}`}
-                      style={{ ...landing.item(1).style, ['--rv-y' as string]: '16px', ['--rv-blur' as string]: '2.5px', ['--rv-delay' as string]: '120ms', ['--rv-step' as string]: '80ms' }}
-                    >
-                      数えたことはありますか？
-                    </span>
-                  </h1>
-                  <p
-                    {...landing.item(4)}
-                    className={`mt-5 text-base sm:text-lg text-stone-600 leading-relaxed text-balance ${landing.item(4).className}`}
-                    style={{ ...landing.item(4).style, ['--rv-y' as string]: '10px', ['--rv-delay' as string]: '120ms', ['--rv-step' as string]: '70ms' }}
-                  >
-                    要介護度と困りごとを入れるだけで、1週間の介護タイムラインを作成。
-                    介護保険で足りない部分を埋める地域のサービスと、その料金がわかります。
-                  </p>
+                  <div className="grid lg:grid-cols-[1.15fr_0.85fr] items-center gap-10 lg:gap-14">
+                    <div className="text-center lg:text-left">
+                      <span
+                        {...landing.item(0)}
+                        className={`inline-flex items-center rounded-full border-2 border-stone-900 bg-white px-4 py-2 text-sm font-bold text-orange-800 shadow-[0_3px_0_#251B17] ${landing.item(0).className}`}
+                        style={{ ...landing.item(0).style, ['--rv-y' as string]: '12px', ['--rv-delay' as string]: '80ms' }}
+                      >
+                        家族のケア時間を、見えるかたちに
+                      </span>
 
-                  <div
-                    {...landing.item(6)}
-                    className={`mt-9 flex flex-col sm:flex-row items-center justify-center gap-3 ${landing.item(6).className}`}
-                    style={{ ...landing.item(6).style, ['--rv-y' as string]: '10px', ['--rv-delay' as string]: '120ms', ['--rv-step' as string]: '70ms' }}
-                  >
-                    <button
-                      type="button"
-                      onClick={() => setIsWizardOpen(true)}
-                      className="press lift w-full sm:w-auto px-8 h-12 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-bold text-base transition-colors"
+                      <h1 className="mt-7 text-4xl sm:text-5xl lg:text-[56px] font-extrabold tracking-[-0.04em] text-stone-900 leading-[1.28] text-balance">
+                        <span
+                          {...landing.item(1)}
+                          className={`block ${landing.item(1).className}`}
+                          style={{ ...landing.item(1).style, ['--rv-y' as string]: '16px', ['--rv-delay' as string]: '110ms' }}
+                        >
+                          介護に使っている時間、
+                        </span>
+                        <span
+                          {...landing.item(2)}
+                          className={`block text-orange-700 ${landing.item(2).className}`}
+                          style={{ ...landing.item(2).style, ['--rv-y' as string]: '16px', ['--rv-delay' as string]: '150ms' }}
+                        >
+                          いっしょに整理しませんか？
+                        </span>
+                      </h1>
+
+                      <p
+                        {...landing.item(4)}
+                        className={`mt-6 text-base sm:text-lg text-stone-600 leading-[1.9] text-balance ${landing.item(4).className}`}
+                        style={{ ...landing.item(4).style, ['--rv-y' as string]: '10px', ['--rv-delay' as string]: '190ms' }}
+                      >
+                        5つの質問に答えるだけで、1週間のケア時間と、地域で頼れるサービスを整理します。
+                        ご家族やケアマネジャーとの相談にもそのまま使えます。
+                      </p>
+
+                      <div
+                        {...landing.item(6)}
+                        className={`mt-8 flex flex-col sm:flex-row items-center lg:justify-start gap-4 ${landing.item(6).className}`}
+                        style={{ ...landing.item(6).style, ['--rv-y' as string]: '10px', ['--rv-delay' as string]: '230ms' }}
+                      >
+                        <button
+                          type="button"
+                          onClick={() => setIsWizardOpen(true)}
+                          className="press w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 h-14 rounded-2xl border-2 border-stone-900 bg-orange-600 hover:bg-orange-700 text-white font-extrabold text-base shadow-[0_5px_0_#251B17] active:translate-y-[3px] active:shadow-[0_2px_0_#251B17] transition-[background-color,transform,box-shadow]"
+                        >
+                          1分で見える化する
+                          <ArrowRight className="w-5 h-5" strokeWidth={2.5} />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={handleLoadDemo}
+                          className="press w-full sm:w-auto px-7 h-14 rounded-2xl border-2 border-stone-900 bg-white hover:bg-orange-50 text-stone-800 font-bold text-base transition-colors"
+                        >
+                          入力例を見てみる
+                        </button>
+                      </div>
+                    </div>
+
+                    <div
+                      {...landing.item(3)}
+                      className={`relative mx-auto w-full max-w-[360px] aspect-square ${landing.item(3).className}`}
+                      style={{ ...landing.item(3).style, ['--rv-y' as string]: '12px', ['--rv-delay' as string]: '170ms' }}
+                      aria-hidden="true"
                     >
-                      はじめる（約1分）
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleLoadDemo}
-                      className="press w-full sm:w-auto px-8 h-12 rounded-xl border border-stone-300 hover:glass text-stone-700 font-semibold text-base transition-colors"
-                    >
-                      入力例で見てみる
-                    </button>
+                      <div className="absolute inset-4 rounded-[42px] border-[3px] border-stone-900 bg-orange-600 rotate-3 shadow-[8px_8px_0_#251B17]" />
+                      <div className="absolute inset-10 rounded-[34px] border-[3px] border-stone-900 bg-white -rotate-3 flex flex-col items-center justify-center text-center px-8">
+                        <span className="w-24 h-24 rounded-full bg-orange-100 border-[3px] border-stone-900 flex items-center justify-center text-orange-700">
+                          <Clock3 className="w-12 h-12" strokeWidth={2.4} />
+                        </span>
+                        <span className="mt-6 text-2xl font-extrabold text-stone-900">あなたの時間を</span>
+                        <span className="mt-1 text-xl font-extrabold text-orange-700">取り戻すお手伝い</span>
+                      </div>
+                      <span className="absolute top-0 right-3 w-12 h-12 rounded-full border-[3px] border-stone-900 bg-orange-100" />
+                      <span className="absolute bottom-3 left-0 w-8 h-8 rounded-full border-[3px] border-stone-900 bg-white" />
+                    </div>
                   </div>
 
-                  <ol className="mt-14 grid grid-cols-1 sm:grid-cols-3 gap-6 text-left">
+                  <ol className="mt-16 grid grid-cols-1 sm:grid-cols-3 gap-4 text-left">
                     {[
                       { n: '1', t: '状況を入力', d: '要介護度・世帯・困りごとを選ぶだけ。約1分で終わります。' },
                       { n: '2', t: 'タイムラインが完成', d: '1週間28マスで「誰がいつ支えているか」が見えます。' },
@@ -311,15 +343,15 @@ export default function HomePage() {
                       <li
                         key={step.n}
                         {...landing.item(5 + Number(step.n))}
-                        className={`flex gap-3 ${landing.item(0).className}`}
-                        style={{ ...landing.item(5 + Number(step.n)).style, ['--rv-y' as string]: '10px', ['--rv-delay' as string]: '120ms', ['--rv-step' as string]: '80ms' }}
+                        className={`flex gap-4 rounded-3xl border-2 border-stone-900 bg-white p-5 shadow-[0_4px_0_rgba(37,27,23,0.16)] ${landing.item(5 + Number(step.n)).className}`}
+                        style={{ ...landing.item(5 + Number(step.n)).style, ['--rv-y' as string]: '10px', ['--rv-delay' as string]: '250ms', ['--rv-step' as string]: '70ms' }}
                       >
-                        <span className="w-7 h-7 rounded-full bg-orange-100 text-orange-700 font-bold text-sm flex items-center justify-center shrink-0 mt-0.5">
+                        <span className="w-10 h-10 rounded-full border-2 border-stone-900 bg-orange-100 text-orange-800 font-extrabold text-sm flex items-center justify-center shrink-0">
                           {step.n}
                         </span>
                         <div>
-                          <div className="font-bold text-sm text-stone-900">{step.t}</div>
-                          <p className="mt-1 text-[13px] text-stone-500 leading-relaxed">{step.d}</p>
+                          <div className="font-extrabold text-base text-stone-900">{step.t}</div>
+                          <p className="mt-1.5 text-sm text-stone-600 leading-relaxed">{step.d}</p>
                         </div>
                       </li>
                     ))}
@@ -327,6 +359,22 @@ export default function HomePage() {
                 </section>
               ) : (
                 <>
+                  <section className="rounded-[28px] border-2 border-stone-900 bg-orange-600 px-6 sm:px-8 py-6 text-white shadow-[0_5px_0_#251B17]">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                      <div>
+                        <span className="inline-flex rounded-full border-2 border-white/80 px-3 py-1 text-[13px] font-extrabold tracking-wide">
+                          あなたのケアプラン
+                        </span>
+                        <h1 className="mt-3 text-2xl sm:text-3xl font-extrabold leading-snug">
+                          1週間のケア時間と、頼れるサービスをまとめました
+                        </h1>
+                      </div>
+                      <div className="shrink-0 w-16 h-16 rounded-full border-2 border-stone-900 bg-white text-orange-700 flex items-center justify-center shadow-[0_3px_0_#251B17]" aria-hidden="true">
+                        <Clock3 className="w-8 h-8" strokeWidth={2.4} />
+                      </div>
+                    </div>
+                  </section>
+
                   {/* 結論サマリー（最初に答えを見せる） */}
                   <MetricsCards
                     metrics={currentMetrics}
@@ -334,9 +382,9 @@ export default function HomePage() {
                   />
 
                   {/* 条件と予算（コンパクトな1枚） */}
-                  <div className="glass rounded-2xl border border-stone-200 px-5 sm:px-6 py-4">
+                  <div className="glass rounded-[28px] border-2 border-stone-900 px-5 sm:px-7 py-5 shadow-[0_4px_0_rgba(37,27,23,0.14)]">
                     <div className="flex flex-wrap items-center justify-between gap-3">
-                      <p className="text-sm text-stone-600 min-w-0">
+                      <p className="text-sm sm:text-base text-stone-600 min-w-0 leading-relaxed">
                         <span className="font-bold text-stone-900">
                           {CARE_LEVEL_LIMITS[userInput.careLevel].name}
                         </span>
@@ -359,7 +407,7 @@ export default function HomePage() {
                           onClick={() => setIsShareModalOpen(true)}
                           aria-label="共有リンクを発行"
                           title="共有"
-                          className="w-10 h-10 rounded-lg text-stone-400 hover:text-stone-700 hover:bg-stone-100 flex items-center justify-center transition-colors"
+                          className="w-11 h-11 rounded-xl border-2 border-stone-200 text-stone-500 hover:text-orange-800 hover:bg-orange-50 hover:border-stone-900 flex items-center justify-center transition-colors"
                         >
                           <Share2 className="w-4.5 h-4.5" />
                         </button>
@@ -368,14 +416,14 @@ export default function HomePage() {
                           onClick={handlePrint}
                           aria-label="A4で印刷"
                           title="印刷"
-                          className="w-10 h-10 rounded-lg text-stone-400 hover:text-stone-700 hover:bg-stone-100 flex items-center justify-center transition-colors"
+                          className="w-11 h-11 rounded-xl border-2 border-stone-200 text-stone-500 hover:text-orange-800 hover:bg-orange-50 hover:border-stone-900 flex items-center justify-center transition-colors"
                         >
                           <Printer className="w-4.5 h-4.5" />
                         </button>
                         <button
                           type="button"
                           onClick={() => setIsWizardOpen(true)}
-                          className="inline-flex items-center gap-1.5 h-10 px-4 rounded-lg bg-orange-600 hover:bg-orange-700 text-white text-sm font-bold transition-colors"
+                          className="inline-flex items-center gap-1.5 h-11 px-4 rounded-xl border-2 border-stone-900 bg-orange-600 hover:bg-orange-700 text-white text-sm font-extrabold shadow-[0_3px_0_#251B17] transition-colors"
                         >
                           <Edit3 className="w-4 h-4" />
                           条件を変更
@@ -384,7 +432,7 @@ export default function HomePage() {
                     </div>
 
                     {/* 予算 */}
-                    <div className="mt-4 pt-4 border-t border-stone-100">
+                    <div className="mt-5 pt-5 border-t-2 border-stone-200">
                       <div className="flex items-baseline justify-between gap-3 mb-1.5">
                         <label htmlFor="budget-range" className="micro-label">
                           月の予算 —— 動かすと組み合わせを作り直します
@@ -399,7 +447,7 @@ export default function HomePage() {
                           <button
                             type="button"
                             onClick={handleResetAssignments}
-                            className="text-[12px] text-stone-400 hover:text-orange-700 underline underline-offset-2"
+                            className="min-h-11 px-2 text-[13px] font-bold text-stone-500 hover:text-orange-800 underline underline-offset-4"
                           >
                             おすすめに戻す
                           </button>
@@ -415,9 +463,9 @@ export default function HomePage() {
                         value={monthlyBudget}
                         onChange={(e) => handleBudgetChange(Number(e.target.value))}
                         style={{ '--range-progress': `${(monthlyBudget / 200000) * 100}%` } as React.CSSProperties}
-                        className="w-full h-6 cursor-pointer"
+                        className="w-full h-11 cursor-pointer"
                       />
-                      <div className="flex justify-between text-[11px] text-stone-400 tabular-nums mt-1">
+                      <div className="flex justify-between text-[13px] font-semibold text-stone-500 tabular-nums mt-1">
                         <span>0円</span>
                         <span>5万</span>
                         <span>10万</span>
@@ -477,17 +525,17 @@ export default function HomePage() {
       />
 
       {/* 免責事項・フッター（全画面共通） */}
-      <footer className="glass border-t border-stone-200 py-6 px-4 text-center text-xs text-stone-500 space-y-2 no-print">
+      <footer className="bg-stone-50 border-t-2 border-stone-900 py-8 px-4 text-center text-sm text-stone-600 space-y-3 no-print">
         <div className="max-w-4xl mx-auto flex items-center justify-center space-x-2 text-stone-600 font-semibold">
           <HelpCircle className="w-4 h-4 text-orange-600" />
           <span>免責事項 ＆ 掲載基準について</span>
         </div>
-        <p className="max-w-3xl mx-auto leading-relaxed text-stone-400 text-[11px]">
+        <p className="max-w-3xl mx-auto leading-relaxed text-stone-500 text-[13px]">
           本システムで試算される金額・介護保険給付・サービス利用可否は目安であり、個別の所得状況や身体状況により異なります。
           実際のケアプラン作成や利用にあたっては、必ず担当ケアマネジャー、地域包括支援センター、または各提供事業者にご相談ください。
           掲載されているサービス情報は、広告費や掲載料による順位優遇を行わない公平な基準でAI構造化および人手承認を行っています。
         </p>
-        <div className="pt-2 text-[11px] text-stone-400">
+        <div className="pt-2 text-[13px] text-stone-500">
           © 2026 けあしる - 介護の「見えない時間」可視化 × 保険外サービス横断検索
         </div>
       </footer>
