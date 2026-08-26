@@ -347,8 +347,9 @@ export const ScrollHero: React.FC<ScrollHeroProps> = ({ onStart, onLoadDemo }) =
                   style={{
                     position: 'relative',
                     display: 'inline-block',
-                    padding: '14px 26px',
-                    borderRadius: 18,
+                    padding: '26px 44px',
+                    borderRadius: 26,
+                    maxWidth: '92vw',
                     background: 'rgba(255,248,243,0.78)',
                     backdropFilter: 'blur(5px)',
                     WebkitBackdropFilter: 'blur(5px)',
@@ -357,7 +358,7 @@ export const ScrollHero: React.FC<ScrollHeroProps> = ({ onStart, onLoadDemo }) =
                 >
                   <svg
                     viewBox="0 0 120 60"
-                    width="min(360px,54vw)"
+                    width="min(760px,88vw)"
                     style={{
                       position: 'absolute',
                       left: '50%',
@@ -377,9 +378,11 @@ export const ScrollHero: React.FC<ScrollHeroProps> = ({ onStart, onLoadDemo }) =
                     className="font-display"
                     style={{
                       position: 'relative',
-                      fontSize: 'clamp(21px,2.7vw,34px)',
+                      // デザイン仕様の2.5倍
+                      fontSize: 'clamp(53px,6.75vw,85px)',
                       fontWeight: 900,
                       letterSpacing: '-0.02em',
+                      lineHeight: 1.2,
                       color: '#2D231E',
                     }}
                   >
