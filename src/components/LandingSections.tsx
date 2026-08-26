@@ -51,9 +51,9 @@ const QDATA = [
 ];
 
 /* しくみアニメの刻み（デザイン仕様の値） */
-const QTICK = 70;      // 1ティックの長さ(ms)
-const TPC = 3;         // 1文字あたりのティック数（タイプを見せるため遅め）
-const QPAUSE = 9;      // 行間の休止ティック
+const QTICK = 55;      // 1ティックの長さ(ms)
+const TPC = 2;         // 1文字あたりのティック数
+const QPAUSE = 6;      // 行間の休止ティック
 const S1_STEP = 7;     // ステージ1で1件採用するごとのティック
 const S2_SEND = 17;    // ステージ2で共有が完了するティック
 
@@ -329,12 +329,13 @@ export const LandingSections: React.FC<LandingSectionsProps> = ({ onStart }) => 
               // 列構成はステージによらず固定。移動した瞬間に枠の形が変わらないようにする
               gridTemplateColumns: 'minmax(0,1fr) 56px minmax(0,1fr)',
               gap: 20,
-              alignItems: 'center',
+              // center だと下に要素が増えたとき週表が上へズレるので、上端で揃える
+              alignItems: 'start',
               minHeight: 432,
             }}
           >
             {/* ---------- 左：週表 ---------- */}
-            <div>
+            <div style={{ paddingTop: 8 }}>
               <div
                 style={{
                   border: `2px solid ${arrived ? '#ED6A2C' : '#4A3E37'}`,
@@ -375,40 +376,53 @@ export const LandingSections: React.FC<LandingSectionsProps> = ({ onStart }) => 
                 ))}
               </div>
 
-              {/* 共有リンク（ステージ2でのみ存在する） */}
-              {stage === 2 && (
-                <div
-                  style={{
-                    marginTop: 16, display: 'flex', alignItems: 'center', gap: 11,
-                    padding: '13px 15px', borderRadius: 12,
-                    border: `2px solid ${arrived ? PRIMARY : '#4A3E37'}`,
-                    background: '#241C18',
-                    transition: 'border-color .5s cubic-bezier(.22,1,.36,1)',
-                  }}
-                >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={arrived ? '#ED6A2C' : '#8A7F76'} strokeWidth="2.4" strokeLinecap="round" aria-hidden="true" style={{ transition: 'stroke .5s ease' }}>
-                    <path d="M10 14l4-4" /><path d="M13.5 6.5l1.5-1.5a3.5 3.5 0 0 1 5 5l-1.5 1.5" /><path d="M10.5 17.5L9 19a3.5 3.5 0 0 1-5-5l1.5-1.5" />
-                  </svg>
-                  <span style={{ fontSize: 14, fontWeight: 700, color: '#F6F0EA' }}>keashiru.jp/p/8f2a</span>
-                  <span
+              {/*
+                共有リンク行。ステージ2でだけ見せるが、出し入れで左カラムの高さが
+                変わると週表が上下にズレるため、grid-template-rows で滑らかに開閉する。
+              */}
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateRows: stage === 2 ? '1fr' : '0fr',
+                  transition: 'grid-template-rows .55s cubic-bezier(.22,1,.36,1)',
+                }}
+                aria-hidden={stage !== 2}
+              >
+                <div style={{ minHeight: 0, overflow: 'hidden' }}>
+                  <div
                     style={{
-                      marginLeft: 'auto', display: 'inline-flex', alignItems: 'center', gap: 8,
-                      fontSize: 13, fontWeight: 700,
-                      color: arrived ? '#ED6A2C' : '#8A7F76',
-                      transition: 'color .5s ease',
+                      marginTop: 16, display: 'flex', alignItems: 'center', gap: 11,
+                      padding: '13px 15px', borderRadius: 12,
+                      border: `2px solid ${arrived ? PRIMARY : '#4A3E37'}`,
+                      background: '#241C18',
+                      opacity: stage === 2 ? 1 : 0,
+                      transition: 'border-color .5s cubic-bezier(.22,1,.36,1), opacity .4s ease',
                     }}
                   >
-                    {arrived ? '開かれました' : '送りました'}
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={arrived ? '#ED6A2C' : '#8A7F76'} strokeWidth="2.6" strokeLinecap="round" aria-hidden="true" style={{ transition: 'stroke .5s ease' }}>
-                      <path d="M5 12h13M13 6l6 6-6 6" />
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={arrived ? '#ED6A2C' : '#8A7F76'} strokeWidth="2.4" strokeLinecap="round" aria-hidden="true" style={{ transition: 'stroke .5s ease' }}>
+                      <path d="M10 14l4-4" /><path d="M13.5 6.5l1.5-1.5a3.5 3.5 0 0 1 5 5l-1.5 1.5" /><path d="M10.5 17.5L9 19a3.5 3.5 0 0 1-5-5l1.5-1.5" />
                     </svg>
-                  </span>
+                    <span style={{ fontSize: 14, fontWeight: 700, color: '#F6F0EA' }}>keashiru.jp/p/8f2a</span>
+                    <span
+                      style={{
+                        marginLeft: 'auto', display: 'inline-flex', alignItems: 'center', gap: 8,
+                        fontSize: 13, fontWeight: 700,
+                        color: arrived ? '#ED6A2C' : '#8A7F76',
+                        transition: 'color .5s ease',
+                      }}
+                    >
+                      {arrived ? '開かれました' : '送りました'}
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={arrived ? '#ED6A2C' : '#8A7F76'} strokeWidth="2.6" strokeLinecap="round" aria-hidden="true" style={{ transition: 'stroke .5s ease' }}>
+                        <path d="M5 12h13M13 6l6 6-6 6" />
+                      </svg>
+                    </span>
+                  </div>
                 </div>
-              )}
+              </div>
             </div>
 
             {/* ---------- 中央：コネクタ（ステージ2のみ） ---------- */}
-            <div aria-hidden="true" style={{ position: 'relative', height: 40, display: 'flex', alignItems: 'center', opacity: stage === 2 ? 1 : 0, transition: 'opacity .5s ease' }}>
+            <div aria-hidden="true" style={{ position: 'relative', height: 40, marginTop: 96, display: 'flex', alignItems: 'center', opacity: stage === 2 ? 1 : 0, transition: 'opacity .5s ease' }}>
               {stage === 2 && (
                 <>
                   <span style={{ flex: 1, borderTop: '2px dashed #ED6A2C' }} />
@@ -430,7 +444,7 @@ export const LandingSections: React.FC<LandingSectionsProps> = ({ onStart }) => 
             </div>
 
             {/* ---------- 右：ステージ別 ---------- */}
-            <div style={{ position: 'relative', minHeight: 320 }}>
+            <div style={{ position: 'relative', minHeight: 340, paddingTop: 8 }}>
               {/* ===== ステージ0：上から順にタイプされて埋まる ===== */}
               <div
                 style={{
