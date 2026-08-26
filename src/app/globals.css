@@ -750,3 +750,12 @@ input[type="range"]:active::-moz-range-thumb {
     animation-iteration-count: 1 !important;
   }
 }
+
+/* ヘッダーの関係者向けリンク。狭い画面では「1分ではじめる」を優先して隠す */
+.header-pro-links {
+  display: flex;
+  align-items: center;
+}
+@media (max-width: 760px) {
+  .header-pro-links { display: none; }
+}

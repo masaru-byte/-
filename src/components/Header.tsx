@@ -22,6 +22,9 @@ interface HeaderProps {
   onHome: () => void;
   /** 結果画面を見ているときだけ、条件変更と共有を出す */
   showResultActions?: boolean;
+  /** ランディングを見ているときだけ、開始ボタンを出す */
+  showStart?: boolean;
+  onStart?: () => void;
   onEditConditions?: () => void;
   onHandoff?: () => void;
 }
@@ -31,6 +34,8 @@ export const Header: React.FC<HeaderProps> = ({
   onSelectTab,
   onHome,
   showResultActions = false,
+  showStart = false,
+  onStart,
   onEditConditions,
   onHandoff,
 }) => {
@@ -58,7 +63,7 @@ export const Header: React.FC<HeaderProps> = ({
         style={{
           maxWidth: 1180,
           margin: '0 auto',
-          padding: '0 32px',
+          padding: '0 clamp(14px,3vw,32px)',
           height: 68,
           display: 'flex',
           alignItems: 'center',
@@ -112,8 +117,30 @@ export const Header: React.FC<HeaderProps> = ({
             </>
           )}
 
+          {/* ランディングは縦に長い。下まで行かなくても始められるようにする。 */}
+          {showStart && (
+            <button
+              type="button"
+              onClick={onStart}
+              className="press"
+              style={{
+                minHeight: 44, padding: '0 20px', borderRadius: 999,
+                border: `2px solid ${INK}`, background: PRIMARY, color: '#fff',
+                fontSize: 14, fontWeight: 700, boxShadow: `0 3px 0 ${INK}`,
+                whiteSpace: 'nowrap', cursor: 'pointer',
+                display: 'inline-flex', alignItems: 'center', gap: 7,
+              }}
+            >
+              1分ではじめる
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.6" strokeLinecap="round" aria-hidden="true">
+                <path d="M5 12h13M13 6l6 6-6 6" />
+              </svg>
+            </button>
+          )}
+
           {/* 関係者向け（控えめに） */}
-          <nav style={{ display: 'flex', alignItems: 'center' }} aria-label="関係者向け">
+          {/* 狭い画面では隠す。市民向けの導線を優先する。 */}
+          <nav className="header-pro-links" aria-label="関係者向け">
             {activeTab !== 'timeline' && (
               <button
                 type="button"

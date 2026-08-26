@@ -252,6 +252,11 @@ export default function HomePage() {
           window.scrollTo(0, 0);
         }}
         showResultActions={activeTab === 'timeline' && hasStarted && !isWizardOpen}
+        showStart={activeTab === 'timeline' && !hasStarted && !isWizardOpen && !isHandoffOpen}
+        onStart={() => {
+          setIsWizardOpen(true);
+          window.scrollTo(0, 0);
+        }}
         onEditConditions={() => setIsWizardOpen(true)}
         onHandoff={() => {
           setIsHandoffOpen(true);
