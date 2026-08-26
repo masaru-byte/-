@@ -36,6 +36,7 @@ import { GovDashboard } from '@/components/GovDashboard';
 import { ServicePlanList } from '@/components/ServicePlanList';
 import { ResultHeader } from '@/components/ResultHeader';
 import { AskSection, HandoffSection } from '@/components/ResultFooterSections';
+import { HandoffView } from '@/components/HandoffView';
 import { AdminPipeline } from '@/components/AdminPipeline';
 import {
   Service,
@@ -75,6 +76,8 @@ export default function HomePage() {
   const [monthlyBudget, setMonthlyBudget] = useState<number>(userInput.monthlyBudget);
   const [activeSlot, setActiveSlot] = useState<TimelineSlot | null>(null);
   const [isShareModalOpen, setIsShareModalOpen] = useState<boolean>(false);
+  // 送る画面（ケアマネジャーがリンクを開いたときの見え方）
+  const [isHandoffOpen, setIsHandoffOpen] = useState<boolean>(false);
 
   // 初期スロット（Before状態）
   const initialSlots = useMemo(() => {
@@ -234,7 +237,10 @@ export default function HomePage() {
         }}
         showResultActions={activeTab === 'timeline' && hasStarted && !isWizardOpen}
         onEditConditions={() => setIsWizardOpen(true)}
-        onHandoff={() => setIsShareModalOpen(true)}
+        onHandoff={() => {
+          setIsHandoffOpen(true);
+          window.scrollTo(0, 0);
+        }}
       />
 
       {/* 印刷専用レイアウト（Ctrl+P時のみレンダリング） */}
@@ -247,8 +253,20 @@ export default function HomePage() {
 
       {/* メインコンテンツ */}
       <main className="flex-1 no-print">
+        {/* 送る画面：開いている間はこれだけを見せる */}
+        {isHandoffOpen && (
+          <HandoffView
+            userInput={userInput}
+            slots={currentSlots}
+            metrics={currentMetrics}
+            initialFamilyHours={initialFamilyHours}
+            onBack={() => setIsHandoffOpen(false)}
+            onPrint={handlePrint}
+          />
+        )}
+
         {/* ランディングは全画面幅が必要なので、max-w コンテナの外に置く */}
-        {activeTab === 'timeline' && !isWizardOpen && !hasStarted && (
+        {!isHandoffOpen && activeTab === 'timeline' && !isWizardOpen && !hasStarted && (
           <>
             <ScrollHero
               onStart={() => setIsWizardOpen(true)}
@@ -258,7 +276,10 @@ export default function HomePage() {
           </>
         )}
 
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-16 space-y-6">
+        <div
+          className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-16 space-y-6"
+          hidden={isHandoffOpen}
+        >
           {/* タブ1: タイムライン画面 */}
           {activeTab === 'timeline' && (
             <div className="space-y-5">
@@ -315,7 +336,10 @@ export default function HomePage() {
 
                   {/* ケアマネジャーへ渡す */}
                   <HandoffSection
-                    onShare={() => setIsShareModalOpen(true)}
+                    onShare={() => {
+                      setIsHandoffOpen(true);
+                      window.scrollTo(0, 0);
+                    }}
                     onPrint={handlePrint}
                   />
                 </>
