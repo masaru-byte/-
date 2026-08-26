@@ -423,6 +423,10 @@ export const ScrollHero: React.FC<ScrollHeroProps> = ({ onStart, onLoadDemo }) =
                 <h1
                   className="font-display"
                   style={{
+                    // 週表より手前に置く。2行目が下から差し込まれる間、
+                    // カードの背面に潜って消えてしまうのを防ぐ。
+                    position: 'relative',
+                    zIndex: 2,
                     textAlign: 'center',
                     fontSize: 'clamp(34px,6vw,92px)',
                     fontWeight: 900,
@@ -431,15 +435,21 @@ export const ScrollHero: React.FC<ScrollHeroProps> = ({ onStart, onLoadDemo }) =
                     color: '#2D231E',
                   }}
                 >
-                  <span style={{ display: 'block', opacity: Number(H.headOp), transform: H.l1Tf }}>
-                    知らないまま、
+                  {/* 各行は自分の行帯の中だけで動く。帯の外にはみ出さないので、
+                      下から差し込まれる2行目が週表に重ならない。 */}
+                  <span style={{ display: 'block', overflow: 'hidden' }}>
+                    <span style={{ display: 'block', opacity: Number(H.headOp), transform: H.l1Tf }}>
+                      知らないまま、
+                    </span>
                   </span>
-                  <span style={{ display: 'block', opacity: Number(H.headOp), transform: H.l2Tf }}>
-                    終わらせない。
+                  <span style={{ display: 'block', overflow: 'hidden' }}>
+                    <span style={{ display: 'block', opacity: Number(H.headOp), transform: H.l2Tf }}>
+                      終わらせない。
+                    </span>
                   </span>
                 </h1>
 
-                <div style={{ width: '100%', transform: `scale(${H.tableSc})` }}>
+                <div style={{ position: 'relative', zIndex: 1, width: '100%', transform: `scale(${H.tableSc})` }}>
                   <div
                     style={{
                       position: 'relative',
