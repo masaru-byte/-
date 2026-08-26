@@ -116,27 +116,38 @@ export const LandingSections: React.FC<LandingSectionsProps> = ({ onStart }) => 
 
   /**
    * ステージ内をティックで進め、終端に達したら次のステージへ。
-   * 動きを減らす設定では、各ステージの完成形を静止表示する。
+   *
+   * ステージ番号とティックは ref を正として1本のインターバルで進める。
+   * setTick の更新関数の中で setStage を呼ぶと、開発時に更新関数が
+   * 2回実行されてステージを飛ばすため（1→3 のように見える）。
    */
+  const tickRef = useRef(0);
+  const stageRef = useRef(0);
+
   useEffect(() => {
     if (reduced) {
-      // 静止表示。完成形まで一度で進める
-      const raf = requestAnimationFrame(() => setTick(STAGE_TICKS[stage]));
+      const raf = requestAnimationFrame(() => setTick(STAGE_TICKS[stageRef.current]));
       return () => cancelAnimationFrame(raf);
     }
+
     const id = window.setInterval(() => {
-      setTick((t) => {
-        if (t < STAGE_TICKS[stage]) return t + 1;
-        // 終端で少し置いてから次へ
-        if (t < STAGE_TICKS[stage] + 12) return t + 1;
-        setStage((sg) => (sg + 1) % STAGES.length);
-        return 0;
-      });
+      const limit = STAGE_TICKS[stageRef.current] + 14; // 終端で少し置く
+      if (tickRef.current >= limit) {
+        tickRef.current = 0;
+        stageRef.current = (stageRef.current + 1) % STAGES.length;
+        setStage(stageRef.current);
+      } else {
+        tickRef.current += 1;
+      }
+      setTick(tickRef.current);
     }, QTICK);
+
     return () => window.clearInterval(id);
-  }, [stage, reduced]);
+  }, [reduced]);
 
   const pickStage = (i: number) => {
+    stageRef.current = i;
+    tickRef.current = 0;
     setStage(i);
     setTick(0);
   };
@@ -144,6 +155,8 @@ export const LandingSections: React.FC<LandingSectionsProps> = ({ onStart }) => 
   /* ---- 派生値 ---- */
   // ステージ1: 安い順に何件採用できたか
   const adopted = stage === 0 ? 0 : stage === 1 ? Math.min(LADDER.length, Math.floor(tick / S1_STEP)) : LADDER.length;
+  // ステージ0: 3項目すべて打ち終わったか
+  const allTyped = stage === 0 && tick >= Q_TOTAL;
   // ステージ2: リンクが相手に届いたか（届くまでは右側は待機状態）
   const arrived = stage === 2 && tick >= S2_SEND;
   // 左の週表で色がつく枠の数（採用数に応じて増える）
@@ -313,19 +326,18 @@ export const LandingSections: React.FC<LandingSectionsProps> = ({ onStart }) => 
               background: '#241C18',
               padding: 44,
               display: 'grid',
-              // ステージ2以外はコネクタを畳んで、左右2枚だけを見せる
-              gridTemplateColumns: stage === 2 ? 'minmax(0,1fr) 56px minmax(0,1fr)' : 'minmax(0,1fr) 0px minmax(0,1fr)',
-              gap: stage === 2 ? 20 : 52,
+              // 列構成はステージによらず固定。移動した瞬間に枠の形が変わらないようにする
+              gridTemplateColumns: 'minmax(0,1fr) 56px minmax(0,1fr)',
+              gap: 20,
               alignItems: 'center',
               minHeight: 432,
-              transition: 'grid-template-columns .9s cubic-bezier(.22,1,.36,1), gap .9s cubic-bezier(.22,1,.36,1)',
             }}
           >
             {/* ---------- 左：週表 ---------- */}
             <div>
               <div
                 style={{
-                  border: `2px solid ${stage === 2 ? '#ED6A2C' : '#4A3E37'}`,
+                  border: `2px solid ${arrived ? '#ED6A2C' : '#4A3E37'}`,
                   borderRadius: 12,
                   background: '#2D231E',
                   padding: 14,
@@ -428,90 +440,96 @@ export const LandingSections: React.FC<LandingSectionsProps> = ({ onStart }) => 
                   pointerEvents: stage === 0 ? 'auto' : 'none',
                 }}
               >
-                {/* 「整理された条件」の枠。入力中はオレンジに点く */}
+                <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.1em', color: '#D98A55' }}>
+                  整理された条件
+                </span>
+
+                {/* 全部そろうと、3枚まとめて浮き上がる */}
                 <div
                   style={{
-                    border: `2px solid ${stage === 0 && tick < Q_TOTAL ? PRIMARY : '#4A3E37'}`,
-                    borderRadius: 16,
-                    background: '#2D231E',
-                    padding: 18,
-                    transition: 'border-color .55s cubic-bezier(.22,1,.36,1)',
+                    marginTop: 12,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 12,
+                    transform: allTyped ? 'translateY(-2px)' : 'none',
+                    transition: 'transform .5s cubic-bezier(.22,1,.36,1)',
                   }}
                 >
-                  <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.1em', color: '#D98A55' }}>
-                    整理された条件
-                  </span>
-
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 12 }}>
-                    {QDATA.map((r, i) => {
-                      const startT = Q_STARTS[i];
-                      const typed = Math.max(0, Math.min(r.v.length, Math.floor((tick - startT) / TPC)));
-                      const started = tick >= startT;
-                      const typing = stage === 0 && started && typed < r.v.length;
-                      const done = started && typed >= r.v.length;
-                      return (
-                        <div
-                          key={r.k}
-                          style={{
-                            border: `2px solid ${typing ? PRIMARY : '#4A3E37'}`,
-                            borderRadius: 12,
-                            padding: '13px 16px',
-                            background: typing ? '#332620' : '#241C18',
-                            // まだ順番が来ていない行は伏せておく
-                            opacity: started ? 1 : 0.3,
-                            transform: started ? 'none' : 'translateY(4px)',
-                            transition:
-                              'border-color .3s ease, background-color .3s ease, opacity .4s ease, transform .4s cubic-bezier(.22,1,.36,1)',
-                          }}
-                        >
-                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
-                            <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.08em', color: '#A79A90' }}>
-                              {r.k}
-                            </span>
-                            <span
-                              aria-hidden="true"
-                              style={{
-                                width: 22, height: 22, borderRadius: 999, background: PRIMARY,
-                                display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
-                                opacity: done ? 1 : 0,
-                                transform: done ? 'scale(1)' : 'scale(0.5)',
-                                transition: 'opacity .3s ease, transform .35s cubic-bezier(.22,1,.36,1)',
-                              }}
-                            >
-                              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.4" strokeLinecap="round">
-                                <path d="M5 13l4 4L19 7" />
-                              </svg>
-                            </span>
-                          </div>
-
-                          {/* 1文字ずつ現れる値。入力中の行にだけキャレットを出す */}
-                          <div style={{ marginTop: 6, height: 30, display: 'flex', alignItems: 'center', gap: 2 }}>
-                            <span style={{ fontSize: 21, fontWeight: 700, color: '#F6F0EA', whiteSpace: 'pre' }}>
-                              {r.v.slice(0, typed)}
-                            </span>
-                            <span
-                              aria-hidden="true"
-                              style={{
-                                width: typing ? 3 : 0,
-                                height: 23,
-                                background: PRIMARY,
-                                borderRadius: 1,
-                                animation: reduced || !typing ? undefined : 'caretBlink 0.9s step-end infinite',
-                              }}
-                            />
-                          </div>
+                  {QDATA.map((r, i) => {
+                    const startT = Q_STARTS[i];
+                    const typed = Math.max(0, Math.min(r.v.length, Math.floor((tick - startT) / TPC)));
+                    const started = tick >= startT;
+                    const typing = stage === 0 && started && typed < r.v.length;
+                    const done = started && typed >= r.v.length;
+                    // 入力中の1枚だけを強調し、全部そろったら3枚とも強調する
+                    const lit = typing || allTyped;
+                    return (
+                      <div
+                        key={r.k}
+                        style={{
+                          border: `2px solid ${lit ? PRIMARY : '#4A3E37'}`,
+                          borderRadius: 12,
+                          padding: '13px 16px',
+                          background: typing ? '#33261F' : '#241C18',
+                          // 入力中の枠だけ手前に持ち上げる
+                          transform: typing ? 'scale(1.015)' : 'scale(1)',
+                          boxShadow: typing
+                            ? '0 0 0 4px rgba(237,106,44,0.14)'
+                            : allTyped
+                            ? '0 0 0 3px rgba(237,106,44,0.09)'
+                            : 'none',
+                          opacity: started ? 1 : 0.32,
+                          transition:
+                            'border-color .3s ease, background-color .3s ease, box-shadow .45s ease, transform .35s cubic-bezier(.22,1,.36,1), opacity .4s ease',
+                        }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+                          <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.08em', color: typing ? '#D98A55' : '#A79A90', transition: 'color .3s ease' }}>
+                            {r.k}
+                          </span>
+                          <span
+                            aria-hidden="true"
+                            style={{
+                              width: 22, height: 22, borderRadius: 999, background: PRIMARY,
+                              display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                              opacity: done ? 1 : 0,
+                              transform: done ? 'scale(1)' : 'scale(0.5)',
+                              transition: 'opacity .3s ease, transform .35s cubic-bezier(.22,1,.36,1)',
+                            }}
+                          >
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3.4" strokeLinecap="round">
+                              <path d="M5 13l4 4L19 7" />
+                            </svg>
+                          </span>
                         </div>
-                      );
-                    })}
-                  </div>
+
+                        {/* 1文字ずつ現れる値。入力中の行にだけキャレットを出す */}
+                        <div style={{ marginTop: 6, height: 30, display: 'flex', alignItems: 'center', gap: 2 }}>
+                          <span style={{ fontSize: 21, fontWeight: 700, color: '#F6F0EA', whiteSpace: 'pre' }}>
+                            {r.v.slice(0, typed)}
+                          </span>
+                          <span
+                            aria-hidden="true"
+                            style={{
+                              width: typing ? 3 : 0,
+                              height: 23,
+                              background: PRIMARY,
+                              borderRadius: 1,
+                              animation: reduced || !typing ? undefined : 'caretBlink 0.9s step-end infinite',
+                            }}
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
 
-                {/* 入力が終わると、左の表へ向かう矢印が出る */}
+                {/* 全部そろってから、左の表へ向かう矢印が出る */}
                 <div
                   style={{
                     marginTop: 16, display: 'flex', alignItems: 'center', gap: 10,
-                    opacity: stage === 0 && tick >= Q_TOTAL ? 1 : 0,
-                    transform: stage === 0 && tick >= Q_TOTAL ? 'none' : 'translateY(6px)',
+                    opacity: allTyped ? 1 : 0,
+                    transform: allTyped ? 'none' : 'translateY(6px)',
                     transition: 'opacity .5s ease .15s, transform .5s cubic-bezier(.22,1,.36,1) .15s',
                   }}
                 >
